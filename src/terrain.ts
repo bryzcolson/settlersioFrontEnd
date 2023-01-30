@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { Hexagon } from "./hexagonDistance";
-function createTerrain(hexagon:Hexagon, width:number, height:number, densityPerW:number):THREE.Mesh {
+import {Noise} from "./noise";
+function createTerrain(noise:Noise, hexagon:Hexagon, width:number, height:number, densityPerW:number):THREE.Mesh {
     /**const groundGeo = new PlaneGeometry(0, 0, 1000, 1000);
 
     let disMap = new TextureLoader()
@@ -46,8 +47,9 @@ function createTerrain(hexagon:Hexagon, width:number, height:number, densityPerW
         //}
         //posAttr.setZ(i, heightmap[i]);
         //posAttr.setZ(i, i/10);
-        let distance = hexagon.distanceToHexagon(posAttr.getX(i), posAttr.getY(i));
-        posAttr.setZ(i, distance);
+        //let distance = hexagon.distanceToHexagon(posAttr.getX(i), posAttr.getY(i));
+        let height = noise.getNoise(posAttr.getX(i), posAttr.getY(i));
+        posAttr.setZ(i, height);
 
     }
 

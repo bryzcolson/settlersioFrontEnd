@@ -27,6 +27,7 @@ import { resizeRendererToDisplaySize } from './helpers/responsiveness'
 import { Hexagon } from './hexagonDistance'
 import './style.css'
 import { createTerrain } from './terrain'
+import {Noise} from "./noise";
 
 const CANVAS_ID = 'scene'
 
@@ -130,14 +131,16 @@ function init() {
     let w = 20;
     let densityPerW = 30;
     let hexagon:Hexagon = new Hexagon(0,0,5);
+    let noise:Noise = new Noise(10,-1*hexagon.radius, -hexagon.radius,
+        w,hexagon);
     //let arr = hexagon.distanceArray(densityPerW);
     //console.log(arr);
-    console.log(Math.sqrt(3)*2.5)
-    console.log(hexagon.distanceToHexagon(0,0));
-    console.log(hexagon.distanceToHexagon(-4,0));
-    console.log(hexagon.distanceToHexagon(4,0));
+    //console.log(Math.sqrt(3)*2.5)
+    //console.log(hexagon.distanceToHexagon(0,0));
+    //console.log(hexagon.distanceToHexagon(-4,0));
+    //console.log(hexagon.distanceToHexagon(4,0));
 
-    let terrain = createTerrain(hexagon,w,w,densityPerW-1);
+    let terrain = createTerrain(noise,hexagon,w,w,densityPerW-1);
     scene.add(terrain);
   }
 
