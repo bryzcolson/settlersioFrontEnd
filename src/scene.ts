@@ -86,7 +86,7 @@ function init() {
   {
     ambientLight = new AmbientLight('white', 0.4)
     pointLight = new PointLight('#ffdca8', 1.2, 100)
-    pointLight.position.set(-2, 3, 3)
+    pointLight.position.set(5, 15, 12)
     pointLight.castShadow = true
     pointLight.shadow.radius = 4
     pointLight.shadow.camera.near = 0.5
@@ -129,9 +129,9 @@ function init() {
     scene.add(cube)
     scene.add(plane)*/
     let w = 20;
-    let densityPerW = 30;
+    let densityPerW = 50;
     let hexagon:Hexagon = new Hexagon(0,0,5);
-    let noise:Noise = new Noise(10,-1*hexagon.radius, -hexagon.radius,
+    let noise:Noise = new Noise(20,-1*hexagon.radius, -hexagon.radius,
         w,hexagon);
     //let arr = hexagon.distanceArray(densityPerW);
     //console.log(arr);

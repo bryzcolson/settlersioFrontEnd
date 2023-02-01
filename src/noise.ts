@@ -1,3 +1,4 @@
+import { InterpolateDiscrete } from "three";
 import {Hexagon} from "./hexagonDistance";
 
 
@@ -9,6 +10,7 @@ class Noise {
     worldY:number;
 
     noise:number[];
+    perlinNoise: Array<Array<number>>;
     noiseDensity:number;
     constructor(noiseDensity: number, worldX:number, worldY:number, width:number, hexagon:Hexagon) {
         this.worldX = worldX;
@@ -17,9 +19,79 @@ class Noise {
 
         this.noiseDensity = noiseDensity;
         this.noise = new Array(noiseDensity*noiseDensity).fill(0);
+        this.perlinNoise = new Array(noiseDensity*noiseDensity).fill([]);
         this.hexagon = hexagon;
         this.generateBasicNoise();
+        this.generateGradient();
     }
+
+    //--------------------------
+    generateGradient() {
+        for (let i = 0; i < this.noiseDensity; i++) {
+            for (let j = 0; j < this.noiseDensity; j++) {
+                let x = (i / (this.noiseDensity-1))*this.width + this.worldX;
+                let y = (j / (this.noiseDensity-1))*this.width + this.worldY;
+
+                let gradient = [Math.random(), Math.random()];
+                let norm = gradient[0]*gradient[0] + gradient[1]*gradient[1];
+                norm = Math.sqrt(norm);
+                this.perlinNoise[j*this.noiseDensity + i] = [gradient[0] / norm, gradient[1] / norm];
+            }
+        }
+    }
+    /**
+     * 
+     * @param i i value for array
+     * @param j j value for array
+     * @param x x world coordinate
+     * @param y y world coordinate
+     */
+    dotProduct(i:number, j:number, x:number, y:number):number {
+        let v1 = this.perlinNoise[j*this.noiseDensity + i];
+
+        let dx = x - v1[0];
+        let dy = y - v1[1];
+
+        return (dx*v1[0] + dy*v1[1]);
+    }
+    getPerlin(x:number,y:number):number {
+        // Make sure in our bounds
+        if (x < this.worldX || x > this.worldX + this.width) return 0;
+        if (y < this.worldY || y > this.worldY + this.width) return 0;
+
+        // Convert to i and j position in our noise array (will be decimals)
+        let i = ((x - this.worldX) / this.width) * (this.noiseDensity - 1);
+        let j = ((y - this.worldY) / this.width) * (this.noiseDensity - 1);
+
+        if (i < 0 || i > this.noiseDensity || j < 0 || j > this.noiseDensity) {
+            // Should not happen
+            console.warn("Computing i and j for noise density returned out of bounds. X: " + x + "Y: " + y +
+                " worldX: " + this.worldX + " worldY: " + this.worldY + " width: " + this.width);
+        }
+
+        // Get integer lower and upper indicies
+        let i1 = Math.floor(i);
+        let i2 = Math.ceil(i);
+        let j1 = Math.floor(j);
+        let j2 = Math.ceil(j);
+
+        // --- Bilinear interpolation ---
+        // Interpolate on the x axis
+        let xT = i - i1;
+        let yT = j - j1;
+
+        let n0 = this.dotProduct(i1, j1, x,y);
+        let n1 = this.dotProduct(i2, j1, x, y);
+        let ix0 = this.lerp(n0, n1, xT);
+
+        n0 = this.dotProduct(i2, j1, x,y);
+        n1 = this.dotProduct(i2,j2, x,y);
+        let ix1 = this.lerp(n0,n1, xT);
+
+        return this.lerp(ix0,ix1,yT);
+
+    }
+    //--------------------------
 
     generateBasicNoise(){
         for (let i = 0; i < this.noiseDensity; i++) {
@@ -61,8 +133,8 @@ class Noise {
 
         // --- Bilinear interpolation ---
         // Interpolate on the x axis
-        let xT = i / (i2-i1);
-        let yT = j / (j2-j1);
+        let xT = i - i1;
+        let yT = j - j1;
         return this.bilinearInterpolation(this.getIndexNoise(i1, j1), this.getIndexNoise(i2, j1),
             this.getIndexNoise(i1, j2), this.getIndexNoise(i2,j2), xT,yT);
     }
@@ -71,8 +143,9 @@ class Noise {
         return this.noise[j*this.noiseDensity + i];
     }
 
-    lerp(a:number,b:number,i:number):number {
-        return i*(b-a) + a;
+    lerp(a:number,b:number,t:number):number {
+        t = this.fade(t);
+        return t*(b-a) + a;
     }
 
     /**
@@ -89,6 +162,11 @@ class Noise {
         let noiseLower = this.lerp(bottomLeft, bottomRight, xT);
 
         return this.lerp(noiseUpper, noiseLower, yT);
+    }
+
+    fade(t:number) {
+        // 6t^5 - 15t^4 + 10t^3
+        return (6*t*t - 15*t + 10)*t*t*t;
     }
 
 

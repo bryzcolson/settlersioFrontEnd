@@ -39,7 +39,6 @@ class Hexagon {
      */
     distanceToHexagon(x:number, y:number) {
         const SQ3 = Math.sqrt(3);
-        console.log("OX " + x + " OY " + y);
         // Convert to hexagon coordinates
         /*if (this.centerX > x) x = this.centerX - x;
         else x = x - this.centerX;
@@ -106,6 +105,7 @@ class Hexagon {
         }
         if (distance < 0) distance = 0;
         console.log("X: " + x + " Y:" +y + " D: " + distance);
+        if (distance > this.radius*0.4) distance = this.radius*0.4;
         return distance;
     }
 

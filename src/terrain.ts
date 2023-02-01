@@ -27,10 +27,10 @@ function createTerrain(noise:Noise, hexagon:Hexagon, width:number, height:number
     let plane = new THREE.Mesh(
         new THREE.PlaneGeometry(size.x, size.z, densityPerW, densityPerW),
         new THREE.MeshStandardMaterial({
-            wireframe:false,
+            wireframe:true,
             color: 0xFFFFFF,
             side: THREE.FrontSide,
-            //vertexColors: THREE.VertexColors,
+            //vertexColors: true,
         })
     );
     plane.rotateX(-Math.PI / 2)
@@ -38,8 +38,12 @@ function createTerrain(noise:Noise, hexagon:Hexagon, width:number, height:number
     plane.receiveShadow = true;
 
     let posAttr = plane.geometry.getAttribute("position");
-    console.log("Count: " + posAttr.count
-    )
+    console.log("Count: " + posAttr.count);
+    //plane.material.vertexColors = true;
+    //let colorAttr = plane.geometry.getAttribute("color");
+    //for (let i = 0 ; i < colorAttr.count; i++) {
+        //colorAttr.setXYZ(i, 0.5,0.5,0.5);
+    //}
     for (let i = 0; i < posAttr.count; i++) {
         //if (heightmap[i] == undefined) {
         //    console.log("BAD TIMES");
@@ -48,10 +52,12 @@ function createTerrain(noise:Noise, hexagon:Hexagon, width:number, height:number
         //posAttr.setZ(i, heightmap[i]);
         //posAttr.setZ(i, i/10);
         //let distance = hexagon.distanceToHexagon(posAttr.getX(i), posAttr.getY(i));
-        let height = noise.getNoise(posAttr.getX(i), posAttr.getY(i));
+        let height = noise.getPerlin(posAttr.getX(i), posAttr.getY(i));
         posAttr.setZ(i, height);
-
+        //plane.geometry.getAttribute("color").setXYZ(i, 100,100,100);
+        //plane.geometry.getAttribute("color").setXYZ(i, 250*(i/posAttr.count), 250*(i/posAttr.count), 250*(i/posAttr.count));
     }
+
 
     //let colorAttr = plane.material.vertexColors = true;
 
