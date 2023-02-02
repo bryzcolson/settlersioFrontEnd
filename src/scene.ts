@@ -131,8 +131,10 @@ function init() {
     let w = 20;
     let densityPerW = 50;
     let hexagon:Hexagon = new Hexagon(0,0,5);
-    let noise:Noise = new Noise(20,-1*hexagon.radius, -hexagon.radius,
-        w,hexagon);
+    //let noise:Noise = new Noise(20,-1*hexagon.radius, -hexagon.radius,
+    //    w,hexagon);
+    let noise:Noise = new Noise(8, -1*hexagon.radius, -hexagon.radius,
+          w,hexagon);
     //let arr = hexagon.distanceArray(densityPerW);
     //console.log(arr);
     //console.log(Math.sqrt(3)*2.5)

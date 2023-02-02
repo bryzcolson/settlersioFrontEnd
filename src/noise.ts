@@ -1,4 +1,3 @@
-import { InterpolateDiscrete } from "three";
 import {Hexagon} from "./hexagonDistance";
 
 
@@ -43,14 +42,18 @@ class Noise {
      * 
      * @param i i value for array
      * @param j j value for array
-     * @param x x world coordinate
-     * @param y y world coordinate
+     * @param x x coordinate in ij space (not world coordinates)
+     * @param y y coordinate in ij space (not world coordiinates)
      */
     dotProduct(i:number, j:number, x:number, y:number):number {
+        console.log(i);
+        console.log('x:' + x);
         let v1 = this.perlinNoise[j*this.noiseDensity + i];
 
-        let dx = x - v1[0];
-        let dy = y - v1[1];
+        let dx = x - (v1[0]+i);
+        let dy = y - (v1[1]+j);
+
+        console.log(dx*v1[0] + dy*v1[1]);
 
         return (dx*v1[0] + dy*v1[1]);
     }
@@ -80,15 +83,15 @@ class Noise {
         let xT = i - i1;
         let yT = j - j1;
 
-        let n0 = this.dotProduct(i1, j1, x,y);
-        let n1 = this.dotProduct(i2, j1, x, y);
+        let n0 = this.dotProduct(i1, j1, i,j);
+        let n1 = this.dotProduct(i2, j1, i, j);
         let ix0 = this.lerp(n0, n1, xT);
 
-        n0 = this.dotProduct(i2, j1, x,y);
-        n1 = this.dotProduct(i2,j2, x,y);
+        n0 = this.dotProduct(i2, j1, i,j);
+        n1 = this.dotProduct(i2,j2, i,j);
         let ix1 = this.lerp(n0,n1, xT);
 
-        return this.lerp(ix0,ix1,yT);
+        return 2*(this.lerp(ix0,ix1,yT)+2)*this.hexagon.distanceToHexagon(x,y);
 
     }
     //--------------------------
