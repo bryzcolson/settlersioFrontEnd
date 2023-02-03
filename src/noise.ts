@@ -1,4 +1,5 @@
 import {Hexagon} from "./hexagonDistance";
+import { TileType } from "./tile";
 
 
 class Noise {
@@ -7,14 +8,16 @@ class Noise {
     width:number;
     worldX:number;
     worldY:number;
+    scaleFactor:number;
 
     noise:number[];
     perlinNoise: Array<Array<number>>;
     noiseDensity:number;
-    constructor(noiseDensity: number, worldX:number, worldY:number, width:number, hexagon:Hexagon) {
+    constructor(noiseDensity: number, worldX:number, worldY:number, width:number, hexagon:Hexagon, scaleFactor:number) {
         this.worldX = worldX;
         this.worldY = worldY;
         this.width = width;
+        this.scaleFactor = scaleFactor;
 
         this.noiseDensity = noiseDensity;
         this.noise = new Array(noiseDensity*noiseDensity).fill(0);
@@ -28,8 +31,8 @@ class Noise {
     generateGradient() {
         for (let i = 0; i < this.noiseDensity; i++) {
             for (let j = 0; j < this.noiseDensity; j++) {
-                let x = (i / (this.noiseDensity-1))*this.width + this.worldX;
-                let y = (j / (this.noiseDensity-1))*this.width + this.worldY;
+                //let x = (i / (this.noiseDensity-1))*this.width + this.worldX;
+                //let y = (j / (this.noiseDensity-1))*this.width + this.worldY;
 
                 let gradient = [Math.random(), Math.random()];
                 let norm = gradient[0]*gradient[0] + gradient[1]*gradient[1];
@@ -91,7 +94,7 @@ class Noise {
         n1 = this.dotProduct(i2,j2, i,j);
         let ix1 = this.lerp(n0,n1, xT);
 
-        return 2*(this.lerp(ix0,ix1,yT)+2)*this.hexagon.distanceToHexagon(x,y);
+        return 2*(this.lerp(ix0,ix1,yT)+2)*this.hexagon.distanceToHexagon(x,y) * this.scaleFactor / this.hexagon.radius;
 
     }
     //--------------------------
@@ -176,4 +179,27 @@ class Noise {
 
 }
 
-export {Noise};
+class NoiseFactory {
+    static noiseFromTileType(type:TileType, hexagon:Hexagon):Noise {
+        let x = hexagon.centerX - hexagon.radius;
+        let y = hexagon.centerY - hexagon.radius*Math.sqrt(3)/2;
+        let noise:Noise;
+        switch(type) {
+            case TileType.STONE:
+                noise = new Noise(10, x,y, hexagon.radius*2, hexagon, 1.8);
+                return noise;
+            case TileType.SHEEP:
+                noise = new Noise(5, x,y, hexagon.radius*2, hexagon, 0.25);
+                return noise;
+            case TileType.DESERT:
+                noise = new Noise(10,x,y, hexagon.radius*2, hexagon, 0.1);
+            case TileType.WHEAT:
+            default:
+                noise = new Noise(1, x,y, hexagon.radius*2, hexagon, 0);
+                return noise;
+        }
+    }
+
+}
+
+export {Noise, NoiseFactory};

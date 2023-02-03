@@ -40,11 +40,6 @@ class Hexagon {
     distanceToHexagon(x:number, y:number) {
         const SQ3 = Math.sqrt(3);
         // Convert to hexagon coordinates
-        /*if (this.centerX > x) x = this.centerX - x;
-        else x = x - this.centerX;
-
-        if (this.centerY > y) y = this.centerY - y;
-        else y = y - this.centerY;*/
         x = x - this.centerX;
         y = y - this.centerY;
 
@@ -104,9 +99,14 @@ class Hexagon {
                 break;
         }
         if (distance < 0) distance = 0;
-        console.log("X: " + x + " Y:" +y + " D: " + distance);
-        if (distance > this.radius*0.4) distance = this.radius*0.4;
+        //console.log("X: " + x + " Y:" +y + " D: " + distance);
         return distance;
+    }
+
+    clampedDistanceToHexagon(x:number, y:number) {
+        let dist = this.distanceToHexagon(x,y);
+        if (dist > this.radius*0.4) dist = this.radius*0.4;
+        return dist;
     }
 
     /**distanceArray(size:number) {

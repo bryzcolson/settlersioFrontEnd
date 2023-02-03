@@ -28,6 +28,7 @@ import { Hexagon } from './hexagonDistance'
 import './style.css'
 import { createTerrain } from './terrain'
 import {Noise} from "./noise";
+import { World } from './world'
 
 const CANVAS_ID = 'scene'
 
@@ -113,37 +114,8 @@ function init() {
     cube.position.z = 0;
     scene.add(cube);
 
-    /*const planeGeometry = new PlaneGeometry(3, 3)
-    const planeMaterial = new MeshLambertMaterial({
-      color: 'gray',
-      emissive: 'teal',
-      emissiveIntensity: 0.2,
-      side: 2,
-      transparent: true,
-      opacity: 0.4,
-    })
-    const plane = new Mesh(planeGeometry, planeMaterial)
-    plane.rotateX(Math.PI / 2)
-    plane.receiveShadow = true
-
-    scene.add(cube)
-    scene.add(plane)*/
-    let w = 20;
-    let densityPerW = 50;
-    let hexagon:Hexagon = new Hexagon(0,0,5);
-    //let noise:Noise = new Noise(20,-1*hexagon.radius, -hexagon.radius,
-    //    w,hexagon);
-    let noise:Noise = new Noise(8, -1*hexagon.radius, -hexagon.radius,
-          w,hexagon);
-    //let arr = hexagon.distanceArray(densityPerW);
-    //console.log(arr);
-    //console.log(Math.sqrt(3)*2.5)
-    //console.log(hexagon.distanceToHexagon(0,0));
-    //console.log(hexagon.distanceToHexagon(-4,0));
-    //console.log(hexagon.distanceToHexagon(4,0));
-
-    let terrain = createTerrain(noise,hexagon,w,w,densityPerW-1);
-    scene.add(terrain);
+    let world = new World(5, 5,5,0.8,2);
+    scene.add(world.getTerrain());
   }
 
   // ==== WORLD ====
