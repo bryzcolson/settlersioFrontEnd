@@ -114,7 +114,7 @@ function init() {
     cube.position.z = 0;
     scene.add(cube);
 
-    let world = new World(5, 5,5,0.8,2);
+    let world = new World(5,5,5,0.8,2);
     scene.add(world.getTerrain());
   }
 

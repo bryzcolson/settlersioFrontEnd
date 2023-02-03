@@ -15,17 +15,25 @@ test("Terrain Size", () => {
     expect(width).toBeCloseTo(2*R,3);
     expect(height).toBeCloseTo(H,3);
 
-    world = new World(2,2, R,R, 1);
+    world = new World(2,1, R,R, 1);
     expect(world.terrainWidth).toBeCloseTo(3.5*R, 4);
     expect(world.terrainHeight).toBeCloseTo(1.5*H,4);
 
+    world = new World(1,2, R,R, 1);
+    expect(world.terrainWidth).toBeCloseTo(R*2, 4);
+    expect(world.terrainHeight).toBeCloseTo(2*H,4);
+
+    world = new World(2,2, R,R, 1);
+    expect(world.terrainWidth).toBeCloseTo(3.5*R, 4);
+    expect(world.terrainHeight).toBeCloseTo(2.5*H,4);
+
     world = new World(3,3, R,R, 1);
     expect(world.terrainWidth).toBeCloseTo(5*R, 4);
-    expect(world.terrainHeight).toBeCloseTo(3*H,4);
+    expect(world.terrainHeight).toBeCloseTo(3.5*H,4);
 
     world = new World(4,4, R,R, 1);
     expect(world.terrainWidth).toBeCloseTo(6.5*R, 4);
-    expect(world.terrainHeight).toBeCloseTo(3.5*H,4);
+    expect(world.terrainHeight).toBeCloseTo(4.5*H,4);
 });
 
 function testOwnsPoints(x:number, y:number, tile:Tile) {

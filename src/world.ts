@@ -49,11 +49,12 @@ class World {
         } else {
             this.terrainWidth = Math.ceil(tileGridWidth/2)*2*hexagonRadius + Math.floor(tileGridWidth/2)*hexagonRadius;
         }
-        if (tileGridHeight % 2 == 0) {
-            this.terrainHeight = rSQ3*(tileGridHeight-0.5);
-        } else {
+        if (tileGridWidth == 1) {
             this.terrainHeight = rSQ3*tileGridHeight;
+        } else {
+            this.terrainHeight = rSQ3*(tileGridHeight+0.5);
         }
+        
         let terrainGridWidth = Math.ceil(vertexDensity * this.terrainWidth);
         let terrainGridHeight = Math.ceil(vertexDensity * this.terrainHeight);
 
