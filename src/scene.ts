@@ -29,6 +29,7 @@ import './style.css'
 import { createTerrain } from './terrain'
 import {Noise} from "./noise";
 import { World } from './world'
+import { RWorld } from './RefactoredWorld'
 
 const CANVAS_ID = 'scene'
 
@@ -114,7 +115,8 @@ function init() {
     cube.position.z = 0;
     scene.add(cube);
 
-    let world = new World(5,5,5,0.8,2);
+    //let world = new World(5,5,5,0.8,2);
+    let world = new RWorld(3,3,1);
     scene.add(world.getTerrain());
   }
 

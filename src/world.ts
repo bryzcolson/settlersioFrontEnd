@@ -13,6 +13,8 @@ class World {
     rSQ3:number;
     terrainWidth:number;
     terrainHeight:number;
+    terrainGridWidth:number;
+    terrainGridHeight:number;
 
     /**
      * Creates a new world
@@ -28,7 +30,7 @@ class World {
         this.hexagonRadius = hexagonRadius;
         this.innerHexagonFraction = innerHexagonFraction;
         this.vertexDensity = vertexDensity;
-        
+
         const rSQ3 = hexagonRadius * Math.sqrt(3);
         this.rSQ3 = rSQ3;
         let _defaultTile = new Tile(0,0,0,0);
@@ -55,19 +57,23 @@ class World {
             this.terrainHeight = rSQ3*(tileGridHeight+0.5);
         }
         
-        let terrainGridWidth = Math.ceil(vertexDensity * this.terrainWidth);
-        let terrainGridHeight = Math.ceil(vertexDensity * this.terrainHeight);
+        this.terrainGridWidth = Math.ceil(vertexDensity * this.terrainWidth);
+        this.terrainGridHeight = Math.ceil(vertexDensity * this.terrainHeight);
+
+        let colorTexture = this.getColorTexture();
 
         const size = new THREE.Vector3(this.terrainWidth,0,this.terrainHeight);
         let plane = new THREE.Mesh(
-            new THREE.PlaneGeometry(size.x, size.z, terrainGridWidth, terrainGridHeight),
+            new THREE.PlaneGeometry(size.x, size.z, this.terrainGridWidth, this.terrainGridHeight),
             new THREE.MeshStandardMaterial({
-                wireframe:true,
-                color: 0xFFFFFF,
+                //wireframe:true,
+                //color: 0xFFFFFF,
                 side: THREE.FrontSide,
+                map: colorTexture
             })
         );
         plane.rotateX(-Math.PI / 2);
+
 
         //loop all verticies
         //get tile that owns that vertex
@@ -81,27 +87,7 @@ class World {
             }
 
             // convert to tile grid space
-            //let i = x / rSQ3;
-            //let j = y / rSQ3 + 0.5;
-            // four possible tiles
-            //let i1 = Math.floor(i);
-            //let i2 = Math.ceil(i);
-            //let j1 = Math.floor(j);
-            //let j2 = Math.ceil(j);
-            let tile:Tile|null = null;
-            for (let i = 0; i < tileGridWidth; i++) {
-                for (let j = 0; j < tileGridHeight; j++) {
-                    if (this.tiles[i][j].doesOwnPoint(x,y)) {
-                        console.log("AAAAH");
-                        tile = this.tiles[i][j];
-                        break;
-                    }
-                }
-                if (tile !== null) {
-                    break;
-                }
-            }
-
+            let tile = this.findTileThatOwns(x,y);
 
             let height:number;
             if (tile === null) {
@@ -138,6 +124,63 @@ class World {
 
     getTerrain(): THREE.Mesh {
         return this.terrain;
+    }
+
+    getColorTexture(): THREE.DataTexture {
+        const w = this.terrainGridWidth+1;
+        const h = this.terrainGridHeight +1;
+        const size = w*h;
+        const data = new Uint8Array( 4 * size );
+        const color = new THREE.Color( 0xffffff );
+
+        for ( let n = 0;n < size; n ++ ) {
+            let i = n % w;
+            let j = Math.floor(n / h);
+            let x = (i/w)*this.terrainWidth;
+            let y = (j/h)*this.terrainHeight;
+            let tile = this.findTileThatOwns(x,y);
+            let tileColor:number[];
+            if (tile == null) {
+                tileColor = [0,0,0];
+            } else {
+                tileColor = tile.getColor(x,y);
+            }
+
+            const r = Math.floor( color.r * tileColor[0]);
+            const g = Math.floor( color.g * tileColor[1]);
+            const b = Math.floor( color.b * tileColor[2]);
+
+            const stride = n * 4;
+
+            data[ stride ] = r;
+            data[ stride + 1 ] = g;
+            data[ stride + 2 ] = b;
+            data[ stride + 3 ] = 255;
+
+        }
+
+        // used the buffer to create a DataTexture
+
+        const texture = new THREE.DataTexture( data, w,h  );
+        texture.needsUpdate = true;
+
+        return texture;
+    }
+
+    findTileThatOwns(x:number,y:number):Tile|null {
+        let tile:Tile|null = null;
+        for (let i = 0; i < this.tileGridWidth; i++) {
+            for (let j = 0; j < this.tileGridHeight; j++) {
+                if (this.tiles[i][j].doesOwnPoint(x,y)) {
+                    tile = this.tiles[i][j];
+                    break;
+                }
+            }
+            if (tile !== null) {
+                break;
+            }
+        }
+        return tile;
     }
 }
 

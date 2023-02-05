@@ -37,6 +37,19 @@ class Tile {
         return this.noiseMap.getPerlin(x,y);
     }
 
+    getColor(x:number, y:number): number[] {
+        if (this.tileType == TileType.SHEEP) {
+            return [121, 208+Math.random()*15, 33+Math.random()*15];
+        }
+        else if (this.tileType == TileType.STONE) {
+            return [181, 191+Math.random()*15, 190+Math.random()*15];
+        } else if (this.tileType == TileType.WHEAT) {
+            return [251, 221+Math.random()*15, 126+Math.random()*15];
+        } else {
+            return [0,0,0];
+        }
+    }
+
     
 }
 
