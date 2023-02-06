@@ -13,7 +13,7 @@ export class World extends React.Component{
       <mesh {...this.props}>
         <planeGeometry args={[10, 10, 10, 10]}/>
         <meshStandardMaterial wireframe={true} color='0xFFFFFF'/>
-        <Terrain size={[10, 10, 1]}/>
+        <Terrain width={3} height={3} radius={1} hexRadius={1}/>
       </mesh>
     );
   }
