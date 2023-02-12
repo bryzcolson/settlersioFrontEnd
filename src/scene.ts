@@ -3,6 +3,8 @@ import {
   AmbientLight,
   AxesHelper,
   BoxGeometry,
+  BufferAttribute,
+  BufferGeometry,
   Clock,
   GridHelper,
   LoadingManager,
@@ -17,6 +19,8 @@ import {
   Scene,
   Vector3,
   WebGLRenderer,
+  FrontSide,
+  MeshBasicMaterial
 } from 'three'
 import { DragControls } from 'three/examples/jsm/controls/DragControls'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -30,6 +34,7 @@ import { createTerrain } from './terrain'
 import {Noise} from "./noise";
 import { World } from './world'
 import { RWorld } from './RefactoredWorld'
+import { Tile, TileType } from './tile'
 
 const CANVAS_ID = 'scene'
 
@@ -116,8 +121,48 @@ function init() {
     scene.add(cube);
 
     //let world = new World(5,5,5,0.8,2);
-    let world = new RWorld(3,3,1);
+    // Fill with random tiles
+    let tileGridWidth = 3;
+    let tileGridHeight = 3;
+    let tileTypes:TileType[][] = [];
+    for (let i = 0; i < tileGridWidth; i++) {
+      tileTypes.push([]);
+      for (let j = 0; j < tileGridHeight; j++) {
+        let typeNum = Math.floor(Math.random()*4);
+        let tileType = null;
+        typeNum = 1;
+        if (typeNum == 0 || typeNum == 4) {
+            tileType = TileType.STONE;
+        } else if (typeNum == 1) {
+            tileType = TileType.SHEEP;
+        } else if (typeNum == 2) {
+            tileType = TileType.WHEAT;
+        } else {
+          tileType = TileType.STONE;
+        }
+        tileTypes[i].push(tileType);
+      }
+    }
+    let world = new RWorld(1,3,2,tileTypes);
     scene.add(world.getTerrain());
+
+    //COLOR DEMO - REMOVE LATER
+    /**let geo = new BufferGeometry();
+    let posArray = [0.0,0.0,0.0, 1.0,0.0,0.0, 0,2,0,  1,0,0, 2,0,0, 0,2,0];
+    let colArray = [255,0,0, 255,0,0, 255,0,0,  0,255,0, 0,255,0, 0,255,0];
+    geo.setAttribute('position', new BufferAttribute(new Float32Array(posArray),3));
+    geo.setAttribute('color', new BufferAttribute(new Uint8Array(colArray),3,true))
+    geo.computeVertexNormals();
+    
+    let mat = new MeshStandardMaterial({
+      //wireframe:true,
+      vertexColors: true,
+      side: FrontSide,
+    });
+
+    let mesh = new Mesh(geo, mat);
+    mesh.rotateX(-Math.PI / 2);
+    scene.add(mesh);**/
   }
 
   // ==== WORLD ====

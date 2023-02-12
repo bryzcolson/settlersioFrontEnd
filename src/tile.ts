@@ -8,19 +8,11 @@ class Tile {
 
     tileType:TileType;
 
-    constructor(x:number, y:number, innerRadius:number, outerRadius:number) {
+    constructor(x:number, y:number, innerRadius:number, outerRadius:number, tileType: TileType) {
         // Initialize variables
         this.innerHexagon = new Hexagon(x,y,innerRadius);
         this.outerHexagon = new Hexagon(x,y,outerRadius);
-        this.tileType = TileType.STONE; //TODO: make this a random enum
-        let typeNum = Math.floor(Math.random()*4);
-        if (typeNum == 0 || typeNum == 4) {
-            this.tileType = TileType.STONE;
-        } else if (typeNum == 1) {
-            this.tileType = TileType.SHEEP;
-        } else if (typeNum == 2) {
-            this.tileType = TileType.WHEAT;
-        }
+        this.tileType = tileType;
         this.noiseMap = NoiseFactory.noiseFromTileType(this.tileType, this.innerHexagon); 
     }
 

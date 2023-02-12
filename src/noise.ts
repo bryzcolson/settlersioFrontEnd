@@ -49,21 +49,17 @@ class Noise {
      * @param y y coordinate in ij space (not world coordiinates)
      */
     dotProduct(i:number, j:number, x:number, y:number):number {
-        console.log(i);
-        console.log('x:' + x);
         let v1 = this.perlinNoise[j*this.noiseDensity + i];
 
         let dx = x - (v1[0]+i);
         let dy = y - (v1[1]+j);
 
-        console.log(dx*v1[0] + dy*v1[1]);
-
         return (dx*v1[0] + dy*v1[1]);
     }
     getPerlin(x:number,y:number):number {
         // Make sure in our bounds
-        if (x < this.worldX || x > this.worldX + this.width) return 0;
-        if (y < this.worldY || y > this.worldY + this.width) return 0;
+        if (x <= this.worldX || x >= this.worldX + this.width) return 0;
+        if (y <= this.worldY || y >= this.worldY + this.width) return 0;
 
         // Convert to i and j position in our noise array (will be decimals)
         let i = ((x - this.worldX) / this.width) * (this.noiseDensity - 1);
@@ -80,6 +76,10 @@ class Noise {
         let i2 = Math.ceil(i);
         let j1 = Math.floor(j);
         let j2 = Math.ceil(j);
+        if (j*this.noiseDensity + i >= this.perlinNoise.length) {
+            console.log("BAD");
+            return 0;
+        }
 
         // --- Bilinear interpolation ---
         // Interpolate on the x axis
@@ -136,7 +136,6 @@ class Noise {
         let i2 = Math.ceil(i);
         let j1 = Math.floor(j);
         let j2 = Math.ceil(j);
-
         // --- Bilinear interpolation ---
         // Interpolate on the x axis
         let xT = i - i1;
