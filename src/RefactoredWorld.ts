@@ -12,6 +12,9 @@ class RWorld {
     tiles: Tile[][];
 
     hexagonWorldRadius:number;
+    onePointLen:number;
+    onePointHeight:number;
+    halfPointLen:number;
 
 
     terrain: THREE.Mesh;
@@ -30,6 +33,10 @@ class RWorld {
         this.hexagonVertexRadius = hexagonVertexRadius;
         this.innerHexagonVertexRadius = innerHexagonVertexRadius;
 
+        this.onePointLen = this.hexagonWorldRadius / this.hexagonVertexRadius; // Length of a hexagon vertex segment in worldspace
+        this.halfPointLen = 0.5*this.onePointLen;
+        this.onePointHeight = this.onePointLen * Math.sqrt(3)*0.5;
+
         this.tiles = [];
         this.terrain = this.makeTerrain(tileTypes);
     }
@@ -38,10 +45,7 @@ class RWorld {
         const geometry = new THREE.BufferGeometry();
         let vertexArray:number[] = [];
         let colorArray:number[] = [];
-        let onePointLen = this.hexagonWorldRadius / this.hexagonVertexRadius; // Length of a hexagon vertex segment in worldspace
         let hexagonWorldHeight = Math.sqrt(3)*this.hexagonWorldRadius; // Length of the height of a hexagon in worldspace
-        let halfPointLen = 0.5*onePointLen;
-        let onePointHeight = onePointLen * Math.sqrt(3)*0.5;
         let z = 0; // TODO. Figure this out dynamically depending on which hexagon/tile in (in the loop)
         for (let i = 0; i < this.tileGridWidth; i++) {
             this.tiles.push([]);
@@ -54,59 +58,56 @@ class RWorld {
                 }
                 let tileType:TileType = tileTypes[i][j];
                 this.tiles[i].push(new Tile(baseX + this.hexagonWorldRadius*0.5,
-                    baseY + hexagonWorldHeight*0.5,onePointLen*this.innerHexagonVertexRadius, this.hexagonWorldRadius,tileType));
+                    baseY + hexagonWorldHeight*0.5,this.onePointLen*this.innerHexagonVertexRadius, this.hexagonWorldRadius,tileType));
                 // Loop each vertex in this hexagon and calculate the points in its triangle
                 let maxXc = this.hexagonVertexRadius; // number of vertex segments in this row
                 for (let yc = 0; yc <= this.hexagonVertexRadius*2; yc++) {
                     for (let xc = 0; xc < maxXc; xc++) { // < not equals so we don't generate triangles outside hexagon
-                        let x = baseX + xc*onePointLen;
+                        let x = baseX + xc*this.onePointLen;
                         let y = baseY;
                         if (yc == 0) {
                             // Top row -> Only calculate down triangles
-                            //this.addTriangle([baseX,baseY],[xc,yc],[xc,yc+1],[xc+1,yc+1],arr, onePointLen);
-                            this.addDownTriangleToArray(x,y, onePointLen,halfPointLen,onePointHeight, vertexArray,colorArray, this.tiles[i][j]);
-                            
+                            this.addTriangle([baseX,baseY],[xc,yc],[xc+1,yc],[xc+1,yc+1],vertexArray, colorArray,this.tiles[i][j]);
                         }
                         else if (yc == this.hexagonVertexRadius*2) {
                             // Bottom row -> Only calculate up triangles
-                            this.addUpTriangleToArray(x,y, onePointLen,halfPointLen,onePointHeight, vertexArray,colorArray, this.tiles[i][j]);
-                            //this.addTriangle([baseX,baseY],[xc,yc],[xc,yc-1],[xc+1,yc],arr, onePointLen);
-                        } else {
-                            // middle row -> both up and down triangles
-                            this.addDownTriangleToArray(x,y, onePointLen,halfPointLen,onePointHeight, vertexArray,colorArray, this.tiles[i][j]);
-                            this.addUpTriangleToArray(x,y, onePointLen,halfPointLen,onePointHeight, vertexArray,colorArray, this.tiles[i][j]);
-                            //this.addTriangle([baseX,baseY],[xc,yc],[xc,yc+1],[xc+1,yc+1],arr, onePointLen);
-                            //this.addTriangle([baseX,baseY],[xc,yc],[xc,yc-1],[xc+1,yc],arr, onePointLen);
-
+                            this.addTriangle([baseX,baseY],[xc,yc],[xc+1,yc-1],[xc+1,yc],vertexArray, colorArray,this.tiles[i][j]);
+                        } else if (yc > this.hexagonVertexRadius) {
+                            // Bottom half of hexagon - up and down triangles
+                            this.addTriangle([baseX,baseY],[xc,yc],[xc+1,yc-1],[xc+1,yc],vertexArray, colorArray,this.tiles[i][j]);
+                            this.addTriangle([baseX,baseY],[xc,yc],[xc+1,yc],[xc,yc+1],vertexArray, colorArray,this.tiles[i][j]);
+                        } else if (yc < this.hexagonVertexRadius) {
+                            // Top half of hexagon - up and down triangles
+                            this.addTriangle([baseX,baseY],[xc,yc],[xc,yc-1],[xc+1,yc],vertexArray, colorArray,this.tiles[i][j]);
+                            this.addTriangle([baseX,baseY],[xc,yc],[xc+1,yc],[xc+1,yc+1],vertexArray, colorArray,this.tiles[i][j]);
+                        } else { // yc == this.hexagonVertexRadius (middle row)
+                            this.addTriangle([baseX,baseY],[xc,yc],[xc,yc-1],[xc+1,yc],vertexArray, colorArray,this.tiles[i][j]);
+                            this.addTriangle([baseX,baseY],[xc,yc],[xc+1,yc],[xc,yc+1],vertexArray, colorArray,this.tiles[i][j]);
                         }
 
                     }
-                    baseY = baseY + onePointHeight;
+                    //baseY = baseY + onePointHeight;
                     if (yc >= this.hexagonVertexRadius) { // bottom half of hexagon
                         maxXc--;
-                        baseX = baseX + halfPointLen;
+                        //baseX = baseX + halfPointLen;
                     } else {
                         maxXc++;
-                        baseX = baseX - halfPointLen;
+                        //baseX = baseX - halfPointLen;
                     }
                 }
             }
         }
         const verices = new Float32Array(vertexArray);
-        //geometry.ver
         geometry.setAttribute('position', new THREE.BufferAttribute(verices,3));
         geometry.computeVertexNormals();
-        //geometry.computeTangents();
         geometry.setAttribute( 'color', new THREE.BufferAttribute(new Uint8Array(colorArray),3, true));
 
         let plane = new THREE.Mesh(
             geometry,
             new THREE.MeshStandardMaterial({
                 //wireframe:true,
-                //color: 0xFFFFFF,
                 vertexColors: true,
                 side: THREE.FrontSide,
-                //map: colorTexture
             })
         );
         plane.rotateX(-Math.PI / 2);
@@ -121,13 +122,50 @@ class RWorld {
      * @param c3 ...
      * @param arr The array to add to
      */
-    private addTriangle(base:number[], c1:number[], c2:number[], c3:number[], arr:number[],
-        onePointLen:number) {
+    private addTriangle(base:number[], c1:number[], c2:number[], c3:number[], vertexArray:number[], colorArray:number[], tile:Tile) {
 
+        let v1 = this.getXY(c1[0],c1[1],base[0],base[1]);
+        let color1 = tile.getColor(v1[0],v1[1]);
+        v1.push(tile.getHeight(v1[0],v1[1]));
+        let v2 = this.getXY(c2[0],c2[1],base[0],base[1]);
+        let color2 = tile.getColor(v2[0],v2[1]);
+        v2.push(tile.getHeight(v2[0],v2[1]));
+        let v3 = this.getXY(c3[0],c3[1],base[0],base[1]);
+        let color3 = tile.getColor(v3[0],v3[1]);
+        v3.push(tile.getHeight(v3[0],v3[1]));
+
+        vertexArray.push(v1[0]);
+        vertexArray.push(v1[1]);
+        vertexArray.push(v1[2]);
+        vertexArray.push(v2[0]);
+        vertexArray.push(v2[1]);
+        vertexArray.push(v2[2]);
+        vertexArray.push(v3[0]);
+        vertexArray.push(v3[1]);
+        vertexArray.push(v3[2]);
+
+        colorArray.push(color1[0]);
+        colorArray.push(color1[1]);
+        colorArray.push(color1[2]);
+        colorArray.push(color2[0]);
+        colorArray.push(color2[1]);
+        colorArray.push(color2[2]);
+        colorArray.push(color3[0]);
+        colorArray.push(color3[1]);
+        colorArray.push(color3[2]);
+    }
+
+    private getXY(xc:number,yc:number,baseX:number, baseY:number):number[] {
         //vertex 1
-        let xc = c1[0];
-        let yc = c1[1];
-        //let v1 = [base[0]+xc*onePointLen]
+        let y = baseY + yc*this.onePointHeight;
+        let leftMostXInRow:number;
+        if (yc <= this.hexagonVertexRadius) { // top half of hexagon
+            leftMostXInRow = baseX - this.halfPointLen*yc;
+        } else { // bottom half of hexagon
+            leftMostXInRow = baseX - (2*this.hexagonVertexRadius - yc)*this.halfPointLen;
+        }
+        let x = leftMostXInRow + this.onePointLen*xc;
+        return [x, y];
     }
 
     private addUpTriangleToArray(x:number,y:number, onePointLen:number,

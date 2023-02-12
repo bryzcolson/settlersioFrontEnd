@@ -122,15 +122,15 @@ function init() {
 
     //let world = new World(5,5,5,0.8,2);
     // Fill with random tiles
-    let tileGridWidth = 3;
-    let tileGridHeight = 3;
+    let tileGridWidth = 6;
+    let tileGridHeight = 6;
     let tileTypes:TileType[][] = [];
     for (let i = 0; i < tileGridWidth; i++) {
       tileTypes.push([]);
       for (let j = 0; j < tileGridHeight; j++) {
         let typeNum = Math.floor(Math.random()*4);
         let tileType = null;
-        typeNum = 1;
+        //typeNum = 1;
         if (typeNum == 0 || typeNum == 4) {
             tileType = TileType.STONE;
         } else if (typeNum == 1) {
@@ -143,7 +143,7 @@ function init() {
         tileTypes[i].push(tileType);
       }
     }
-    let world = new RWorld(1,3,2,tileTypes);
+    let world = new RWorld(3,6,5,tileTypes);
     scene.add(world.getTerrain());
 
     //COLOR DEMO - REMOVE LATER
