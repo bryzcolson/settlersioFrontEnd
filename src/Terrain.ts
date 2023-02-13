@@ -1,7 +1,6 @@
 import * as THREE from "three";
-import { Hexagon } from "./hexagonDistance";
-import {Noise} from "./noise";
-function createTerrain(noise:Noise, hexagon:Hexagon, width:number, height:number, densityPerW:number):THREE.Mesh {
+import {Noise} from "./Noise";
+function createTerrain(noise:Noise, width:number, height:number, densityPerW:number):THREE.Mesh {
     /**const groundGeo = new PlaneGeometry(0, 0, 1000, 1000);
 
     let disMap = new TextureLoader()

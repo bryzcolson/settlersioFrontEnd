@@ -1,5 +1,5 @@
-import {Hexagon} from "./hexagonDistance";
-import { TileType } from "./tile";
+import {Hexagon} from "./Hexagon";
+import { TileType } from "./Tile";
 
 
 class Noise {

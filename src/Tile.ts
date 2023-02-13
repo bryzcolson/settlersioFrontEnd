@@ -1,5 +1,5 @@
-import { Hexagon } from "./hexagonDistance";
-import { Noise, NoiseFactory } from "./noise";
+import { Hexagon } from "./Hexagon";
+import { Noise, NoiseFactory } from "./Noise";
 
 class Tile {
     outerHexagon:Hexagon;
@@ -29,7 +29,7 @@ class Tile {
         return this.noiseMap.getPerlin(x,y);
     }
 
-    getColor(x:number, y:number): number[] {
+    getColor(): number[] {
         if (this.tileType == TileType.SHEEP) {
             return [121, 208+Math.random()*15, 33+Math.random()*15];
         }

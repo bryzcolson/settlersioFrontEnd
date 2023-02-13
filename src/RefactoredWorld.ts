@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Tile, TileType } from "./tile";
+import { Tile, TileType } from "./Tile";
 
 
 
@@ -46,7 +46,8 @@ class RWorld {
         let vertexArray:number[] = [];
         let colorArray:number[] = [];
         let hexagonWorldHeight = Math.sqrt(3)*this.hexagonWorldRadius; // Length of the height of a hexagon in worldspace
-        let z = 0; // TODO. Figure this out dynamically depending on which hexagon/tile in (in the loop)
+        // let z = 0;
+        // TODO. Figure this out dynamically depending on which hexagon/tile in (in the loop)
         for (let i = 0; i < this.tileGridWidth; i++) {
             this.tiles.push([]);
             for (let j = 0; j < this.tileGridHeight; j++) {
@@ -63,8 +64,8 @@ class RWorld {
                 let maxXc = this.hexagonVertexRadius; // number of vertex segments in this row
                 for (let yc = 0; yc <= this.hexagonVertexRadius*2; yc++) {
                     for (let xc = 0; xc < maxXc; xc++) { // < not equals so we don't generate triangles outside hexagon
-                        let x = baseX + xc*this.onePointLen;
-                        let y = baseY;
+                        // let x = baseX + xc*this.onePointLen;
+                        // let y = baseY;
                         if (yc == 0) {
                             // Top row -> Only calculate down triangles
                             this.addTriangle([baseX,baseY],[xc,yc],[xc+1,yc],[xc+1,yc+1],vertexArray, colorArray,this.tiles[i][j]);
@@ -125,13 +126,13 @@ class RWorld {
     private addTriangle(base:number[], c1:number[], c2:number[], c3:number[], vertexArray:number[], colorArray:number[], tile:Tile) {
 
         let v1 = this.getXY(c1[0],c1[1],base[0],base[1]);
-        let color1 = tile.getColor(v1[0],v1[1]);
+        let color1 = tile.getColor();
         v1.push(tile.getHeight(v1[0],v1[1]));
         let v2 = this.getXY(c2[0],c2[1],base[0],base[1]);
-        let color2 = tile.getColor(v2[0],v2[1]);
+        let color2 = tile.getColor();
         v2.push(tile.getHeight(v2[0],v2[1]));
         let v3 = this.getXY(c3[0],c3[1],base[0],base[1]);
-        let color3 = tile.getColor(v3[0],v3[1]);
+        let color3 = tile.getColor();
         v3.push(tile.getHeight(v3[0],v3[1]));
 
         vertexArray.push(v1[0]);
@@ -166,113 +167,6 @@ class RWorld {
         }
         let x = leftMostXInRow + this.onePointLen*xc;
         return [x, y];
-    }
-
-    private addUpTriangleToArray(x:number,y:number, onePointLen:number,
-        halfPointLen:number, onePointHeight:number, arr:number[],colorArray:number[], tile:Tile) {
-            //clockwise position order so that the face is facing upwards. (apparently it's supposed to be counterclockwise??)
-        let v1 = [x,y];
-        v1.push(tile.getHeight(v1[0],v1[1]));
-        let v2 = [x+halfPointLen, y-onePointHeight];
-        v2.push(tile.getHeight(v2[0],v2[1]));
-        let v3 = [x+onePointLen, y];
-        v3.push(tile.getHeight(v3[0],v3[1]));
-
-        arr.push(v1[0]);
-        arr.push(v1[1]);
-        arr.push(v1[2]);
-        arr.push(v2[0]);
-        arr.push(v2[1]);
-        arr.push(v2[2]);
-        arr.push(v3[0]);
-        arr.push(v3[1]);
-        arr.push(v3[2]);
-
-        if (tile.tileType == TileType.SHEEP) {
-            console.log("UP");
-            colorArray.push(50);
-            colorArray.push(200);
-            colorArray.push(50);
-            //colorArray.push(255);
-
-            colorArray.push(50);
-            colorArray.push(200);
-            colorArray.push(50);
-            //colorArray.push(255);
-
-            colorArray.push(50);
-            colorArray.push(200);
-            colorArray.push(50);
-            //colorArray.push(255);
-        } else {
-            colorArray.push(200);
-            colorArray.push(200);
-            colorArray.push(200);
-            //colorArray.push(200);
-
-            colorArray.push(200);
-            colorArray.push(200);
-            colorArray.push(200);
-            //colorArray.push(200);
-
-            colorArray.push(200);
-            colorArray.push(200);
-            colorArray.push(200);
-            //colorArray.push(200);
-        }
-    }
-    private addDownTriangleToArray(x:number,y:number, 
-        onePointLen:number, halfPointLen:number, onePointHeight:number, arr:number[],colorArray:number[], tile:Tile) {
-        let v1 = [x,y];
-        v1.push(tile.getHeight(v1[0],v1[1]));
-        let v2 = [x+onePointLen, y];
-        v2.push(tile.getHeight(v2[0],v2[1]));
-        let v3 = [x+halfPointLen, y+onePointHeight];
-        v3.push(tile.getHeight(v3[0],v3[1]));
-        arr.push(v1[0]);
-        arr.push(v1[1]);
-        arr.push(v1[2]);
-        arr.push(v2[0]);
-        arr.push(v2[1]);
-        arr.push(v2[2]);
-        arr.push(v3[0]);
-        arr.push(v3[1]);
-        arr.push(v3[2]);
-
-        if (tile.tileType == TileType.SHEEP) {
-            //console.log("SHEEP");
-            colorArray.push(50);
-            colorArray.push(200);
-            colorArray.push(50);
-            //colorArray.push(200);
-
-            colorArray.push(50);
-            colorArray.push(200);
-            colorArray.push(50);
-            //colorArray.push(200);
-
-            colorArray.push(50);
-            colorArray.push(200);
-            colorArray.push(50);
-            //colorArray.push(200);
-        } else {
-            console.log("DOWN");
-            colorArray.push(200);
-            colorArray.push(200);
-            colorArray.push(200);
-            //colorArray.push(200);
-
-            colorArray.push(200);
-            colorArray.push(200);
-            colorArray.push(200);
-            //colorArray.push(200);
-
-            colorArray.push(200);
-            colorArray.push(200);
-            colorArray.push(200);
-            //colorArray.push(200);
-        }
-        
     }
 
     getTerrain(): THREE.Mesh {

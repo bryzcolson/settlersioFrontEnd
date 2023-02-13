@@ -1,4 +1,4 @@
-import {Tile} from "../src/tile";
+import {Tile} from "../src/Tile";
 
 let tile:Tile;
 const R = 1;
