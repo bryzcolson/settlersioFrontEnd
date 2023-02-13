@@ -1,10 +1,7 @@
-import React from 'react';
-import {BufferAttribute} from "three";
+import * as THREE from "three";
 
-export class Terrain extends React.Component {
+export class Terrain {
   constructor(props) {
-    super(props);
-
     this.props = props;
 
     this.tileGridWidth = props.width;
@@ -63,11 +60,12 @@ export class Terrain extends React.Component {
         }
       }
     }
-    return new BufferAttribute(new Float32Array(arr), 3);
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(arr),3));
+    return geometry;
   }
 
   addUpTriangleToArray(x, y, z, onePointLen, halfPointLen, onePointHeight, arr) {
-
     let v1 = [x, y, z];
     let v2 = [x + halfPointLen, y - onePointHeight, z];
     let v3 = [x + onePointLen, y, z];
@@ -95,16 +93,5 @@ export class Terrain extends React.Component {
     arr.push(v3[0]);
     arr.push(v3[1]);
     arr.push(v3[2]);
-  }
-
-  render() {
-    return (
-      <mesh {...this.props}>
-        <bufferGeometry>
-          <bufferAttribute attach={"attributes-position"} {...this.makeVertices()}/>
-        </bufferGeometry>
-        <meshStandardMaterial wireframe={true}/>
-      </mesh>
-    );
   }
 }
