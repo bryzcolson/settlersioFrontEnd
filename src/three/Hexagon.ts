@@ -1,18 +1,20 @@
-class Hexagon {
-    centerX:number;
-    centerY:number;
-    radius:number;
+export class Hexagon {
+    centerX: number;
 
-    constructor(centerX:number, centerY:number, radius:number) {
+    centerY: number;
+
+    radius: number;
+
+    constructor(centerX: number, centerY: number, radius: number) {
         this.centerX = centerX;
         this.centerY = centerY;
-        this.radius = radius
+        this.radius = radius;
     }
 
-    /*distanceArray(size:number) {
+    /* distanceArray(size:number) {
         let SQ3 = Math.sqrt(3);
         let arr:number[] = [];
-        
+
         let count = 0;
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
@@ -30,89 +32,82 @@ class Hexagon {
             }
         }
         return arr;
-    }*/
+    } */
 
     /**
      * Calculates the point distance to the edge of the hexagon.
      * @param x The world x coordinate of the point to calculate distance to
      * @param y The world y coorindate of the point to calculate distance to
      */
-    distanceToHexagon(x:number, y:number) {
+    distanceToHexagon(x: number, y: number) {
         const SQ3 = Math.sqrt(3);
         // Convert to hexagon coordinates
-        x = x - this.centerX;
-        y = y - this.centerY;
+        const xHex = x - this.centerX;
+        const yHex = y - this.centerY;
 
         // Check outside square of hexagon
-        if (x*x + y*y > this.radius*this.radius) return 0;
-
+        if (xHex * xHex + yHex * yHex > this.radius * this.radius) return 0;
 
         // Compute which section of hexagon we are in
         // Starting in top left of hexagon as 1 and going clockwise to 6
-        let boxNum:number;
-        if (y > 0) {
-            if (y <= -1*SQ3*x) {
+        let boxNum: number;
+        if (yHex > 0) {
+            if (yHex <= -1 * SQ3 * xHex) {
                 boxNum = 1;
-            }
-            else if (y < SQ3*x) {
+            } else if (yHex < SQ3 * xHex) {
                 boxNum = 3;
-            }
-            else {
+            } else {
                 boxNum = 2;
             }
-        }
-        else {
-            if (y > -1 * SQ3*x) {
-                boxNum = 4;
-            }
-            else if (y > SQ3*x) {
-                boxNum = 6;
-            }
-            else {
-                boxNum = 5;
-            }
+        } else if (yHex > -1 * SQ3 * xHex) {
+            boxNum = 4;
+        } else if (yHex > SQ3 * xHex) {
+            boxNum = 6;
+        } else {
+            boxNum = 5;
         }
 
         // Compute the distance to the side
-        let distance:number = 0;
-        //x = Math.abs(x);
-        //y = Math.abs(y);
-        switch(boxNum) {
-            case 1:
-                distance = 0.5* (SQ3*x - y + this.radius*SQ3);
-                break;
-            case 2:
-                distance = SQ3*this.radius/2 - y;
-                break;
-            case 3:
-                distance = 0.5* (-1*SQ3*x - y + this.radius*SQ3);
-                break;
-            case 4:
-                // multiply by -1 at start so the value is positive when inside the hexagon
-                distance = -1*0.5* (SQ3*x - y - this.radius*SQ3);
-                break;
-            case 5:
-                distance = y + SQ3*this.radius/2;
-                break;
-            case 6:
-                distance = -1*0.5* (-1*SQ3*x - y - this.radius*SQ3);
-                break;
+        let distance: number = 0;
+        // x = Math.abs(x);
+        // y = Math.abs(y);
+        // eslint-disable-next-line default-case
+        switch (boxNum) {
+        case 1:
+            distance = 0.5 * (SQ3 * xHex - yHex + this.radius * SQ3);
+            break;
+        case 2:
+            distance = (SQ3 * this.radius) / 2 - y;
+            break;
+        case 3:
+            distance = 0.5 * (-1 * SQ3 * xHex - yHex + this.radius * SQ3);
+            break;
+        case 4:
+            // multiply by -1 at start so the value is positive when inside the hexagon
+            distance = -1 * 0.5 * (SQ3 * xHex - yHex - this.radius * SQ3);
+            break;
+        case 5:
+            distance = yHex + (SQ3 * this.radius) / 2;
+            break;
+        case 6:
+            distance = -1 * 0.5 * (-1 * SQ3 * xHex - yHex - this.radius * SQ3);
+            break;
         }
         if (distance < 0) distance = 0;
-        //console.log("X: " + x + " Y:" +y + " D: " + distance);
+        // console.log("X: " + x + " Y:" +y + " D: " + distance);
         return distance;
     }
 
-    clampedDistanceToHexagon(x:number, y:number) {
-        let dist = this.distanceToHexagon(x,y);
-        if (dist > this.radius*0.4) dist = this.radius*0.4;
+    clampedDistanceToHexagon(x: number, y: number) {
+        let dist = this.distanceToHexagon(x, y);
+        if (dist > this.radius * 0.4) dist = this.radius * 0.4;
         return dist;
     }
 
-    /**distanceArray(size:number) {
+    /** distanceArray(size:number) {
         let SQ3 = Math.sqrt(3);
         let arr:number[] = [];
-        
+
         let count = 0;
         for (let i = 0; i < size; i++) {
             for (let j = 0; j < size; j++) {
@@ -125,9 +120,5 @@ class Hexagon {
             }
         }
         return arr;
-    }**/
-
-
+    }* */
 }
-
-export {Hexagon};
