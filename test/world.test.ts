@@ -1,4 +1,4 @@
-import { Tile } from "../src/tile";
+import { Tile } from "../src/three/Tile";
 import {World} from "../src/world"
 
 let world:World;

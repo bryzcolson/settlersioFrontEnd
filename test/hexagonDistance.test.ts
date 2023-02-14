@@ -1,4 +1,4 @@
-import {Hexagon} from "../src/hexagonDistance";
+import {Hexagon} from "../src/three/Hexagon";
 
 let hexagon:Hexagon;
 let offsetHexagon:Hexagon;
