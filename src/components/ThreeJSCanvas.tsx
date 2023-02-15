@@ -61,8 +61,10 @@ export function ThreeJSCanvas() {
                 tileTypes[i].push(tileType);
             }
         }
-        const world = new World(3, 6, 5, tileTypes).getTerrain();
-        scene.add(world);
+        const hexagonWorldRadius = 3;
+        const world = new World(hexagonWorldRadius, 6, 5, tileTypes);
+        const terrain = world.getTerrain();
+        scene.add(terrain);
 
         // ===== 🎥 CAMERA =====
         let canvas: HTMLCanvasElement = canvasRef.current!;
@@ -71,7 +73,11 @@ export function ThreeJSCanvas() {
 
         // ===== 🕹️ CONTROLS =====
         const cameraControls = new OrbitControls(camera, renderer.domElement);
-        cameraControls.target = world.position.clone();
+        const cameraTarget = terrain.position.clone();
+        // Temporary approximation for testing
+        cameraTarget.x += tileGridWidth*hexagonWorldRadius*0.75;
+        cameraTarget.z -= tileGridHeight*hexagonWorldRadius;
+        cameraControls.target = cameraTarget;
         cameraControls.enableDamping = true;
         cameraControls.autoRotate = false;
         cameraControls.update();
