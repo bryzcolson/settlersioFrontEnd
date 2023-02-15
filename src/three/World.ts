@@ -8,7 +8,7 @@ import { Tile, TileType } from './Tile';
  * @param colorArray the array to append the colors to
  * @param tile The tile this triangle is in. Used to compute the color
  */
-function addTriangle (triangle: THREE.Triangle, vertexArray: number[], colorArray: number[], tile: Tile) {
+function addTriangle(triangle: THREE.Triangle, vertexArray: number[], colorArray: number[], tile: Tile) {
     vertexArray.push(triangle.a.x);
     vertexArray.push(triangle.a.y);
     vertexArray.push(triangle.a.z);
@@ -119,34 +119,14 @@ export class World {
                     for (let xc = 0; xc < maxXc; xc++) {
                         if (yc === 0) {
                             // Top row -> Only calculate down triangles
-                            addTriangle(
-                                this.getDownTriangle(xc,yc, basePos, tile),
-                                vertexArray,
-                                colorArray,
-                                tile
-                            );
+                            addTriangle(this.getDownTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
                         } else if (yc === this.hexagonVertexRadius * 2) {
                             // Bottom row -> Only calculate up triangles
-                            addTriangle(
-                                this.getUpTriangle(xc, yc, basePos, tile),
-                                vertexArray,
-                                colorArray,
-                                tile
-                            );
+                            addTriangle(this.getUpTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
                         } else {
                             // Everywhere else -> Up and down triangles
-                            addTriangle(
-                                this.getUpTriangle(xc, yc, basePos, tile),
-                                vertexArray,
-                                colorArray,
-                                tile
-                            );
-                            addTriangle(
-                                this.getDownTriangle(xc,yc, basePos, tile),
-                                vertexArray,
-                                colorArray,
-                                tile
-                            );
+                            addTriangle(this.getUpTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
+                            addTriangle(this.getDownTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
                         }
                     }
                     if (yc >= this.hexagonVertexRadius) {
@@ -180,7 +160,7 @@ export class World {
      * @param xc The x count in the hexagon vertex loop
      * @param yc The y count in the hexagon vertex loop
      */
-    private getUpTriangle(xc:number, yc:number, basePos:THREE.Vector2, tile: Tile): THREE.Triangle {
+    private getUpTriangle(xc: number, yc: number, basePos: THREE.Vector2, tile: Tile): THREE.Triangle {
         if (yc > this.hexagonVertexRadius) {
             // Bottom half of hexagon
             const v1 = this.getXY(xc, yc, basePos);
@@ -191,7 +171,7 @@ export class World {
                 new THREE.Vector3(v2.x, v2.y, tile.getHeight(v2)),
                 new THREE.Vector3(v3.x, v3.y, tile.getHeight(v3))
             );
-        } 
+        }
         // Upper half of hexagon
         const v1 = this.getXY(xc, yc, basePos);
         const v2 = this.getXY(xc, yc - 1, basePos);
@@ -203,7 +183,7 @@ export class World {
         );
     }
 
-    private getDownTriangle(xc: number, yc:number, basePos:THREE.Vector2, tile:Tile): THREE.Triangle {
+    private getDownTriangle(xc: number, yc: number, basePos: THREE.Vector2, tile: Tile): THREE.Triangle {
         if (yc >= this.hexagonVertexRadius) {
             // Bottom half of hexagon
             const v1 = this.getXY(xc, yc, basePos);
@@ -214,7 +194,7 @@ export class World {
                 new THREE.Vector3(v2.x, v2.y, tile.getHeight(v2)),
                 new THREE.Vector3(v3.x, v3.y, tile.getHeight(v3))
             );
-        } 
+        }
         // Upper half of hexagon
         const v1 = this.getXY(xc, yc, basePos);
         const v2 = this.getXY(xc + 1, yc, basePos);
@@ -233,7 +213,7 @@ export class World {
      * @param basePos the top left vertex of the hexagon in world coordinates
      * @returns a vector with the x/y coordinates for the vertex at cx,cy
      */
-    private getXY(xc: number, yc: number, basePos:THREE.Vector2): THREE.Vector2 {
+    private getXY(xc: number, yc: number, basePos: THREE.Vector2): THREE.Vector2 {
         const y = basePos.y + yc * this.onePointHeight;
         let leftMostXInRow: number;
         if (yc <= this.hexagonVertexRadius) {
@@ -244,11 +224,10 @@ export class World {
             leftMostXInRow = basePos.x - (2 * this.hexagonVertexRadius - yc) * this.halfPointLen;
         }
         const x = leftMostXInRow + this.onePointLen * xc;
-        return new THREE.Vector2(x,y);
+        return new THREE.Vector2(x, y);
     }
 
     getTerrain(): THREE.Mesh {
         return this.terrain;
     }
 }
-

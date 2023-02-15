@@ -3,7 +3,6 @@ import { Hexagon } from './Hexagon';
 import { Noise } from './Noise';
 import { NoiseFactory } from './NoiseFactory';
 
-
 export enum TileType {
     SHEEP,
     WHEAT,

@@ -1,33 +1,34 @@
 import React, { useEffect, useRef } from 'react';
 import {
-    AmbientLight, Clock,
+    AmbientLight,
+    Clock,
     PCFSoftShadowMap,
     PerspectiveCamera,
     PointLight,
     Scene,
     WebGLRenderer
-} from "three";
-import {TileType} from "../three/Tile";
-import {World} from "../three/World";
-import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import Stats from "three/examples/jsm/libs/stats.module";
+} from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import Stats from 'three/examples/jsm/libs/stats.module';
+import { TileType } from '../three/Tile';
+import { World } from '../three/World';
 
-export const ThreeJSCanvas = () => {
+export function ThreeJSCanvas() {
     const canvasRef = useRef(null);
 
     useEffect(() => {
         // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
-        let renderer = new WebGLRenderer({ canvas: canvasRef.current!, antialias: true, alpha: true });
+        const renderer = new WebGLRenderer({ canvas: canvasRef.current!, antialias: true, alpha: true });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = PCFSoftShadowMap;
         document.body.appendChild(renderer.domElement);
-        let scene = new Scene();
+        const scene = new Scene();
 
         // ===== 💡 LIGHTS =====
-        let ambientLight = new AmbientLight('white', 0.4);
-        let pointLight = new PointLight('#ffdca8', 1.2, 100);
+        const ambientLight = new AmbientLight('white', 0.4);
+        const pointLight = new PointLight('#ffdca8', 1.2, 100);
         pointLight.position.set(5, 15, 12);
         pointLight.castShadow = true;
         pointLight.shadow.radius = 4;
@@ -39,15 +40,15 @@ export const ThreeJSCanvas = () => {
         scene.add(pointLight);
 
         // ===== 📦 OBJECTS =====
-        let tileGridWidth = 6;
-        let tileGridHeight = 6;
-        let tileTypes: TileType[][] = [];
+        const tileGridWidth = 6;
+        const tileGridHeight = 6;
+        const tileTypes: TileType[][] = [];
         for (let i = 0; i < tileGridWidth; i++) {
             tileTypes.push([]);
             for (let j = 0; j < tileGridHeight; j++) {
-                let typeNum = Math.floor(Math.random()*4);
+                const typeNum = Math.floor(Math.random() * 4);
                 let tileType: TileType;
-                //typeNum = 1;
+                // typeNum = 1;
                 if (typeNum === 0 || typeNum === 4) {
                     tileType = TileType.STONE;
                 } else if (typeNum === 1) {
@@ -60,16 +61,16 @@ export const ThreeJSCanvas = () => {
                 tileTypes[i].push(tileType);
             }
         }
-        let world = new World(3,6,5,tileTypes).getTerrain();
+        const world = new World(3, 6, 5, tileTypes).getTerrain();
         scene.add(world);
 
         // ===== 🎥 CAMERA =====
         let canvas: HTMLCanvasElement = canvasRef.current!;
-        let camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+        const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
         camera.position.set(0, 25, 25);
 
         // ===== 🕹️ CONTROLS =====
-        let cameraControls = new OrbitControls(camera, renderer.domElement);
+        const cameraControls = new OrbitControls(camera, renderer.domElement);
         cameraControls.target = world.position.clone();
         cameraControls.enableDamping = true;
         cameraControls.autoRotate = false;
@@ -77,16 +78,27 @@ export const ThreeJSCanvas = () => {
 
         // ===== 📈 STATS & CLOCK =====
         new Clock();
-        let stats = Stats();
+        const stats = Stats();
         document.body.appendChild(stats.dom);
 
-        const animate = function () {
+        const resizeRendererToDisplaySize = (webGLRenderer: WebGLRenderer) => {
+            canvas = canvasRef.current!;
+            const width = canvas.clientWidth;
+            const height = canvas.clientHeight;
+            const needResize = canvas.width !== width || canvas.height !== height;
+            if (needResize) {
+                webGLRenderer.setSize(width, height, false);
+            }
+            return needResize;
+        };
+
+        const animate = () => {
             requestAnimationFrame(animate);
 
             stats.update();
 
             if (resizeRendererToDisplaySize(renderer)) {
-                const canvas: HTMLCanvasElement = canvasRef.current!;
+                canvas = canvasRef.current!;
                 camera.aspect = canvas.clientWidth / canvas.clientHeight;
                 camera.updateProjectionMatrix();
             }
@@ -96,17 +108,6 @@ export const ThreeJSCanvas = () => {
             renderer.render(scene, camera);
         };
 
-        const resizeRendererToDisplaySize = (renderer: WebGLRenderer) => {
-            const canvas: HTMLCanvasElement = canvasRef.current!;
-            const width = canvas.clientWidth;
-            const height = canvas.clientHeight;
-            const needResize = canvas.width !== width || canvas.height !== height;
-            if (needResize) {
-                renderer.setSize(width, height, false);
-            }
-            return needResize;
-        }
-
         animate();
 
         return (): void => {
@@ -114,7 +115,5 @@ export const ThreeJSCanvas = () => {
         };
     }, []);
 
-    return (
-        <canvas ref={canvasRef}/>
-    );
-};
+    return <canvas ref={canvasRef} />;
+}

@@ -8,9 +8,9 @@
     "build": "tsc --jsx react-jsx && vite build",
     "preview": "vite preview",
     "test": "jest",
-    "lint": "eslint src/**/*.ts test/**/*.ts",
-    "lint-fix": "eslint src/**/*.ts test/**/*.ts --fix",
-    "prettier": "prettier --ignore-path .gitignore --write */**/*.ts"
+    "lint": "eslint src/**/*.ts src/**/*.tsx test/**/*.ts",
+    "lint-fix": "eslint src/**/*.ts src/**/*.tsx test/**/*.ts --fix",
+    "prettier": "prettier --ignore-path .gitignore --write */**/*.ts */**/*.tsx"
   },
   "dependencies": {
     "react": "^18.2.0",
