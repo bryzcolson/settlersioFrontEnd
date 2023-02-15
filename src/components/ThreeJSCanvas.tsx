@@ -8,7 +8,7 @@ import {
     WebGLRenderer
 } from "three";
 import {TileType} from "../three/Tile";
-import {RWorld} from "../three/RefactoredWorld";
+import {World} from "../three/World";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import Stats from "three/examples/jsm/libs/stats.module";
 
@@ -60,7 +60,7 @@ export const ThreeJSCanvas = () => {
                 tileTypes[i].push(tileType);
             }
         }
-        let world = new RWorld(3,6,5,tileTypes).getTerrain();
+        let world = new World(3,6,5,tileTypes).getTerrain();
         scene.add(world);
 
         // ===== 🎥 CAMERA =====

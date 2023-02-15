@@ -1,6 +1,8 @@
+import * as THREE from 'three';
 import { Hexagon } from './Hexagon';
 import { Noise } from './Noise';
 import { NoiseFactory } from './NoiseFactory';
+
 
 export enum TileType {
     SHEEP,
@@ -34,12 +36,12 @@ export class Tile {
      * @param x world x coordinate
      * @param y world y coordinate
      */
-    doesOwnPoint(x: number, y: number): boolean {
-        return this.outerHexagon.distanceToHexagon(x, y) > 0;
+    doesOwnPoint(position: THREE.Vector2): boolean {
+        return this.outerHexagon.distanceToHexagon(position.x, position.y) > 0;
     }
 
-    getHeight(x: number, y: number): number {
-        return this.noiseMap.getPerlin(x, y);
+    getHeight(position: THREE.Vector2): number {
+        return this.noiseMap.getPerlin(position.x, position.y);
     }
 
     getColor(): number[] {
