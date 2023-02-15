@@ -47,6 +47,7 @@
             "error",
             "single"
         ],
+        "react/jsx-filename-extension": "off",
         "semi": [
             "error",
             "always"

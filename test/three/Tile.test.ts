@@ -1,4 +1,4 @@
-import {Tile, TileType} from '../../src/three/Tile';
+import { Tile, TileType } from '../../src/three/Tile';
 
 let tile: Tile;
 const R = 1;
