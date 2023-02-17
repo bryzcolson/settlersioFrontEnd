@@ -77,7 +77,7 @@ export class Hexagon {
             distance = 0.5 * (SQ3 * xHex - yHex + this.radius * SQ3);
             break;
         case 2:
-            distance = (SQ3 * this.radius) / 2 - y;
+            distance = (SQ3 * this.radius) / 2 - yHex;
             break;
         case 3:
             distance = 0.5 * (-1 * SQ3 * xHex - yHex + this.radius * SQ3);
