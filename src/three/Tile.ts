@@ -67,4 +67,6 @@ export class Tile {
         }
         return [0, 0, 0];
     }
+
+    
 }

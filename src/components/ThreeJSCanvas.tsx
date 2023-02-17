@@ -11,6 +11,7 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { TileType } from '../three/Tile';
+import { makeTreesMesh } from '../three/TreeGeometry';
 import { World } from '../three/World';
 
 export function ThreeJSCanvas() {
@@ -70,6 +71,9 @@ export function ThreeJSCanvas() {
         const world = new World(hexagonWorldRadius, 6, 5, tileTypes);
         const terrain = world.getTerrain();
         scene.add(terrain);
+
+        const trees = makeTreesMesh(world.tiles);
+        scene.add(trees);
 
         // ===== 🎥 CAMERA =====
         let canvas: HTMLCanvasElement = canvasRef.current!;

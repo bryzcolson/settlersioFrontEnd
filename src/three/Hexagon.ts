@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 export class Hexagon {
     centerX: number;
 
@@ -11,28 +13,10 @@ export class Hexagon {
         this.radius = radius;
     }
 
-    /* distanceArray(size:number) {
-        let SQ3 = Math.sqrt(3);
-        let arr:number[] = [];
 
-        let count = 0;
-        for (let i = 0; i < size; i++) {
-            for (let j = 0; j < size; j++) {
-                //let x = this.width * (i / size);
-                //let y = this.height * (j / size);
-                let x = this.width*(i/(size-1) - 0.5);
-                let y = this.height*(j/(size-1) - 0.5);
-                console.log("X:" + x + " Y:" + y + " i:" + i + " j:" + j);
-
-                let distance = x*x+y*y;
-                //let distance = count;
-                //let distance = i+j;
-                arr[count] = distance/5;
-                count++;
-            }
-        }
-        return arr;
-    } */
+    isPointInside(position:THREE.Vector2):boolean {
+        return this.distanceToHexagon(position.x, position.y) > 0;
+    }
 
     /**
      * Calculates the point distance to the edge of the hexagon.
@@ -69,8 +53,6 @@ export class Hexagon {
 
         // Compute the distance to the side
         let distance: number = 0;
-        // x = Math.abs(x);
-        // y = Math.abs(y);
         // eslint-disable-next-line default-case
         switch (boxNum) {
         case 1:
@@ -94,7 +76,6 @@ export class Hexagon {
             break;
         }
         if (distance < 0) distance = 0;
-        // console.log("X: " + x + " Y:" +y + " D: " + distance);
         return distance;
     }
 
@@ -103,22 +84,4 @@ export class Hexagon {
         if (dist > this.radius * 0.4) dist = this.radius * 0.4;
         return dist;
     }
-
-    /** distanceArray(size:number) {
-        let SQ3 = Math.sqrt(3);
-        let arr:number[] = [];
-
-        let count = 0;
-        for (let i = 0; i < size; i++) {
-            for (let j = 0; j < size; j++) {
-                let x = this.boxWidth*(i/(size-1) - 0.5);
-                let y = this.boxHeight*(j/(size-1) - 0.5);
-                let distance = this.distanceToHexagon(x,y);
-                arr[count] = distance;
-                console.log("X: " + x + " Y: " + y + " d: " + distance);
-                count++;
-            }
-        }
-        return arr;
-    }* */
 }
