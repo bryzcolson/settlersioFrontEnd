@@ -15,6 +15,7 @@ import { World } from '../three/World';
 
 export function ThreeJSCanvas() {
     const canvasRef = useRef(null);
+    let requestId: number;
 
     useEffect(() => {
         // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
@@ -99,7 +100,7 @@ export function ThreeJSCanvas() {
         };
 
         const animate = () => {
-            requestAnimationFrame(animate);
+            requestId = requestAnimationFrame(animate);
 
             stats.update();
 
@@ -117,7 +118,7 @@ export function ThreeJSCanvas() {
         animate();
 
         return (): void => {
-            document.body.removeChild(renderer.domElement);
+            cancelAnimationFrame(requestId);
         };
     }, []);
 
