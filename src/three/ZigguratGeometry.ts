@@ -125,9 +125,6 @@ function makeBrickMesh(tiles:Tile[][]):THREE.Mesh {
     const mat = new THREE.MeshStandardMaterial({
         color: 0xffff55
     });
-
-
-
     return new THREE.Mesh(geom, mat);
 }
 
