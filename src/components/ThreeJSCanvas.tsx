@@ -11,6 +11,8 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { TileType } from '../three/Tile';
+import { makeTreesMesh } from '../three/TreeGeometry';
+import { makeBrickMesh } from '../three/ZigguratGeometry';
 import { World } from '../three/World';
 
 export function ThreeJSCanvas() {
@@ -47,17 +49,22 @@ export function ThreeJSCanvas() {
         for (let i = 0; i < tileGridWidth; i++) {
             tileTypes.push([]);
             for (let j = 0; j < tileGridHeight; j++) {
-                const typeNum = Math.floor(Math.random() * 4);
+                const typeNum = Math.floor(Math.random() * 6);
                 let tileType: TileType;
-                // typeNum = 1;
-                if (typeNum === 0 || typeNum === 4) {
+                if (typeNum === 0) {
                     tileType = TileType.STONE;
                 } else if (typeNum === 1) {
                     tileType = TileType.SHEEP;
                 } else if (typeNum === 2) {
                     tileType = TileType.WHEAT;
+                } else if (typeNum === 3) {
+                    tileType = TileType.WOOD;
+                } else if (typeNum === 4) {
+                    tileType = TileType.BRICK;
+                } else if (typeNum === 5) {
+                    tileType = TileType.DESERT;
                 } else {
-                    tileType = TileType.STONE;
+                    tileType = TileType.WATER;
                 }
                 tileTypes[i].push(tileType);
             }
@@ -66,6 +73,12 @@ export function ThreeJSCanvas() {
         const world = new World(hexagonWorldRadius, 6, 5, tileTypes);
         const terrain = world.getTerrain();
         scene.add(terrain);
+
+        const trees = makeTreesMesh(world.tiles);
+        scene.add(trees);
+
+        const bricks = makeBrickMesh(world.tiles);
+        scene.add(bricks);
 
         // ===== 🎥 CAMERA =====
         let canvas: HTMLCanvasElement = canvasRef.current!;

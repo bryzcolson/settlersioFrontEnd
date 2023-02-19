@@ -53,6 +53,20 @@ export class Tile {
         if (this.tileType === TileType.WHEAT) {
             return [251, 221 + Math.random() * 15, 126 + Math.random() * 15];
         }
+        if (this.tileType === TileType.BRICK) {
+            return [170 + Math.random()*15, 74 + Math.random()*3, 68 + Math.random()*3];
+        }
+        if (this.tileType === TileType.WOOD) {
+            return [1+Math.random()*5, 89 + Math.random()*15, 41 + Math.random()*15];
+        }
+        if (this.tileType === TileType.WATER) {
+            return [0, 0, 200 + Math.random()*30];
+        }
+        if (this.tileType === TileType.DESERT) {
+            return [250+Math.random()*3, 213+Math.random()*5, 165 + Math.random()*5];
+        }
         return [0, 0, 0];
     }
+
+    
 }
