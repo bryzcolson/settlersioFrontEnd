@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { Vector2, Vector3 } from 'three';
+import { addContinentalShelf } from './ContinentalShelf';
 import { Tile, TileType } from './Tile';
 
 /**
@@ -112,28 +114,33 @@ export class World {
                     tileType
                 );
                 this.tiles[i].push(tile);
-                // Loop each vertex in this hexagon and calculate the points in its triangle.
-                let maxXc = this.hexagonVertexRadius; // number of vertex segments in this row
-                for (let yc = 0; yc <= this.hexagonVertexRadius * 2; yc++) {
-                    // xc < maxXc not equals so we don't generate triangles outside hexagon
-                    for (let xc = 0; xc < maxXc; xc++) {
-                        if (yc === 0) {
-                            // Top row -> Only calculate down triangles
-                            addTriangle(this.getDownTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
-                        } else if (yc === this.hexagonVertexRadius * 2) {
-                            // Bottom row -> Only calculate up triangles
-                            addTriangle(this.getUpTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
-                        } else {
-                            // Everywhere else -> Up and down triangles
-                            addTriangle(this.getUpTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
-                            addTriangle(this.getDownTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
+                if (tileType !== TileType.WATER) {
+                    addContinentalShelf(tileTypes, i, j, vertexArray, colorArray,
+                        new Vector2(tile.outerHexagon.centerX, tile.outerHexagon.centerY),
+                        this.hexagonWorldRadius);      
+                    // Loop each vertex in this hexagon and calculate the points in its triangle
+                    let maxXc = this.hexagonVertexRadius; // number of vertex segments in this row
+                    for (let yc = 0; yc <= this.hexagonVertexRadius * 2; yc++) {
+                        // xc < maxXc not equals so we don't generate triangles outside hexagon
+                        for (let xc = 0; xc < maxXc; xc++) {
+                            if (yc === 0) {
+                                // Top row -> Only calculate down triangles
+                                addTriangle(this.getDownTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
+                            } else if (yc === this.hexagonVertexRadius * 2) {
+                                // Bottom row -> Only calculate up triangles
+                                addTriangle(this.getUpTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
+                            } else {
+                                // Everywhere else -> Up and down triangles
+                                addTriangle(this.getUpTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
+                                addTriangle(this.getDownTriangle(xc, yc, basePos, tile), vertexArray, colorArray, tile);
+                            }
                         }
-                    }
-                    if (yc >= this.hexagonVertexRadius) {
-                        // top half of hexagon
-                        maxXc--;
-                    } else {
-                        maxXc++;
+                        if (yc >= this.hexagonVertexRadius) {
+                            // top half of hexagon
+                            maxXc--;
+                        } else {
+                            maxXc++;
+                        }
                     }
                 }
             }
