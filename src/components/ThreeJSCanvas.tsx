@@ -8,6 +8,7 @@ import {
     Scene,
     WebGLRenderer
 } from 'three';
+import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { TileType } from '../three/Tile';
@@ -43,6 +44,29 @@ export function ThreeJSCanvas() {
         scene.add(pointLight);
 
         // ===== 📦 OBJECTS =====
+        // Reference to see positive directions
+        const xGeom = new THREE.BoxGeometry(3,1,1,1,1);
+        xGeom.translate(2,0,0);
+        const xCube = new THREE.Mesh(
+            xGeom,
+            new THREE.MeshBasicMaterial({color:0xff0000})
+        );
+        scene.add(xCube);
+        const yGeom = new THREE.BoxGeometry(1,3,1,1,1);
+        yGeom.translate(0,2,0);
+        const yCube = new THREE.Mesh(
+            yGeom,
+            new THREE.MeshBasicMaterial({color:0x00ff00})
+        );
+        scene.add(yCube);
+        const zGeom = new THREE.BoxGeometry(1,1,3,1,1);
+        zGeom.translate(0,0,2);
+        const zCube = new THREE.Mesh(
+            zGeom,
+            new THREE.MeshBasicMaterial({color:0x0000ff})
+        );
+        scene.add(zCube);
+
         const tileGridWidth = 6;
         const tileGridHeight = 6;
         const tileTypes: TileType[][] = [];
@@ -90,7 +114,7 @@ export function ThreeJSCanvas() {
         const cameraTarget = terrain.position.clone();
         // Temporary approximation for testing
         cameraTarget.x += tileGridWidth*hexagonWorldRadius*0.75;
-        cameraTarget.z -= tileGridHeight*hexagonWorldRadius;
+        cameraTarget.z += tileGridHeight*hexagonWorldRadius;
         cameraControls.target = cameraTarget;
         cameraControls.enableDamping = true;
         cameraControls.autoRotate = false;
