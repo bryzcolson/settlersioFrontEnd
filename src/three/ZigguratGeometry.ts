@@ -32,7 +32,7 @@ function addZigGeometry(position:Vector2,zigMid:Vector2,blockHeight:number,geome
         const z_min = (level-1)*blockHeight;
         const blockLGeom = new THREE.BoxGeometry(width_l,blockHeight,width_l);
         blockLGeom.rotateY(zigMid.angle())
-        blockLGeom.translate(position.x,z_min,-position.y);
+        blockLGeom.translate(position.x,z_min,position.y);
         geometries.push(blockLGeom);
     }
 }

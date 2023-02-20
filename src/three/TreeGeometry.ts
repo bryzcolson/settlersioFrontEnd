@@ -81,7 +81,7 @@ function addForest(tile:Tile, geometries:BufferGeometry[]) {
         const z = THREE.MathUtils.randFloat(downMost, upMost); // TODO Refactor this to centerZ
         if (customHexagon.isPointInside(new THREE.Vector2(x,z))) {
             const y = tile.getHeight(new THREE.Vector2(x,z));
-            addTreeGeometry(new Vector3(x,y,-z), // TODO Remove this -1 nonsense
+            addTreeGeometry(new Vector3(x,y,z),
                 tile.outerHexagon.radius * TREE_RADIUS_HEXAGON_MULTIPLE,
                 tile.outerHexagon.radius * TREE_HEIGHT_HEXAGON_MULTIPLE,
                 geometries);

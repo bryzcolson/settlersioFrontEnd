@@ -112,7 +112,7 @@ export class World {
                     tileType
                 );
                 this.tiles[i].push(tile);
-                // Loop each vertex in this hexagon and calculate the points in its triangle
+                // Loop each vertex in this hexagon and calculate the points in its triangle.
                 let maxXc = this.hexagonVertexRadius; // number of vertex segments in this row
                 for (let yc = 0; yc <= this.hexagonVertexRadius * 2; yc++) {
                     // xc < maxXc not equals so we don't generate triangles outside hexagon
@@ -130,7 +130,7 @@ export class World {
                         }
                     }
                     if (yc >= this.hexagonVertexRadius) {
-                        // bottom half of hexagon
+                        // top half of hexagon
                         maxXc--;
                     } else {
                         maxXc++;
@@ -151,7 +151,6 @@ export class World {
                 side: THREE.FrontSide,
             })
         );
-        plane.rotateX(-Math.PI / 2);
         return plane;
     }
 
@@ -164,22 +163,22 @@ export class World {
         if (yc > this.hexagonVertexRadius) {
             // Bottom half of hexagon
             const v1 = this.getXY(xc, yc, basePos);
-            const v2 = this.getXY(xc + 1, yc - 1, basePos);
-            const v3 = this.getXY(xc + 1, yc, basePos);
+            const v2 = this.getXY(xc + 1, yc, basePos);
+            const v3 = this.getXY(xc + 1, yc - 1, basePos);
             return new THREE.Triangle(
-                new THREE.Vector3(v1.x, v1.y, tile.getHeight(v1)),
-                new THREE.Vector3(v2.x, v2.y, tile.getHeight(v2)),
-                new THREE.Vector3(v3.x, v3.y, tile.getHeight(v3))
+                new THREE.Vector3(v1.x, tile.getHeight(v1), v1.y),
+                new THREE.Vector3(v2.x, tile.getHeight(v2), v2.y),
+                new THREE.Vector3(v3.x, tile.getHeight(v3), v3.y)
             );
         }
         // Upper half of hexagon
         const v1 = this.getXY(xc, yc, basePos);
-        const v2 = this.getXY(xc, yc - 1, basePos);
-        const v3 = this.getXY(xc + 1, yc, basePos);
+        const v2 = this.getXY(xc + 1, yc, basePos);
+        const v3 = this.getXY(xc, yc - 1, basePos);
         return new THREE.Triangle(
-            new THREE.Vector3(v1.x, v1.y, tile.getHeight(v1)),
-            new THREE.Vector3(v2.x, v2.y, tile.getHeight(v2)),
-            new THREE.Vector3(v3.x, v3.y, tile.getHeight(v3))
+            new THREE.Vector3(v1.x, tile.getHeight(v1), v1.y),
+            new THREE.Vector3(v2.x, tile.getHeight(v2), v2.y),
+            new THREE.Vector3(v3.x, tile.getHeight(v3), v3.y)
         );
     }
 
@@ -187,22 +186,22 @@ export class World {
         if (yc >= this.hexagonVertexRadius) {
             // Bottom half of hexagon
             const v1 = this.getXY(xc, yc, basePos);
-            const v2 = this.getXY(xc + 1, yc, basePos);
-            const v3 = this.getXY(xc, yc + 1, basePos);
+            const v2 = this.getXY(xc, yc + 1, basePos);
+            const v3 = this.getXY(xc + 1, yc, basePos);
             return new THREE.Triangle(
-                new THREE.Vector3(v1.x, v1.y, tile.getHeight(v1)),
-                new THREE.Vector3(v2.x, v2.y, tile.getHeight(v2)),
-                new THREE.Vector3(v3.x, v3.y, tile.getHeight(v3))
+                new THREE.Vector3(v1.x, tile.getHeight(v1), v1.y),
+                new THREE.Vector3(v2.x, tile.getHeight(v2), v2.y),
+                new THREE.Vector3(v3.x, tile.getHeight(v3), v3.y)
             );
         }
         // Upper half of hexagon
         const v1 = this.getXY(xc, yc, basePos);
-        const v2 = this.getXY(xc + 1, yc, basePos);
-        const v3 = this.getXY(xc + 1, yc + 1, basePos);
+        const v2 = this.getXY(xc + 1, yc + 1, basePos);
+        const v3 = this.getXY(xc + 1, yc, basePos);
         return new THREE.Triangle(
-            new THREE.Vector3(v1.x, v1.y, tile.getHeight(v1)),
-            new THREE.Vector3(v2.x, v2.y, tile.getHeight(v2)),
-            new THREE.Vector3(v3.x, v3.y, tile.getHeight(v3))
+            new THREE.Vector3(v1.x, tile.getHeight(v1), v1.y),
+            new THREE.Vector3(v2.x, tile.getHeight(v2), v2.y),
+            new THREE.Vector3(v3.x, tile.getHeight(v3), v3.y)
         );
     }
 
