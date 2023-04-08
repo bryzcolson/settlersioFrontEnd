@@ -60,7 +60,18 @@ function isWaterOrOutOfBounds(index:{i:number, j:number}, tileTypes:TileType[][]
 function addContinentalShelf(tileTypes:TileType[][], i:number, j:number,
         vertexArray:number[], colorArray:number[], centerPos:Vector2, hexagonRadius:number) {
 
-    // Setup some ease of use variables relating to hexagon world size for generating the trapezoid shelf
+    // Each trapezoid's 4 positions are 2 corners of the hexagon and 2 positions that follow a line
+    // from the center of the hexagon to the corresponding corner and further out.
+    //    _____
+    //   /\___/\
+    //  /_/ . \_\
+    //  \ \___/ /
+    //   \/___\/
+    //
+    // X, Z is the center point of the hexagon. R is the distance from the center to a corner of the hexagon.
+    // All other variables here are 30/60/90 triangle components used to compute each position.
+    // R_... variables can compute the hexagons corners.
+    // SHELF_... variables can compute the outer trapezoid coordinates.
     const R = hexagonRadius;
     const R_O2 = R*0.5;
     const R_O2_S3 = R_O2 * Math.sqrt(3);
