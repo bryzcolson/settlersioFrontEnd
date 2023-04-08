@@ -6,19 +6,20 @@ import {
     PerspectiveCamera,
     PointLight,
     Scene,
-    WebGLRenderer
+    WebGLRenderer,
 } from 'three';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Stats from 'three/examples/jsm/libs/stats.module';
 import { TileType } from '../three/Tile';
 import { makeTreesMesh } from '../three/TreeGeometry';
-import { makeBrickMesh } from '../three/ZigguratGeometry';
 import { World } from '../three/World';
+import { makeOceanFloorMesh, makeWaterMesh } from '../three/Ocean';
+import { makeBrickMesh } from '../three/ZigguratGeometry';
 
 export function ThreeJSCanvas() {
     const canvasRef = useRef(null);
-    let requestId: number;
+    let requestId:number;
 
     useEffect(() => {
         // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
@@ -73,7 +74,7 @@ export function ThreeJSCanvas() {
         for (let i = 0; i < tileGridWidth; i++) {
             tileTypes.push([]);
             for (let j = 0; j < tileGridHeight; j++) {
-                const typeNum = Math.floor(Math.random() * 6);
+                const typeNum = Math.floor(Math.random() * 7);
                 let tileType: TileType;
                 if (typeNum === 0) {
                     tileType = TileType.STONE;
@@ -101,12 +102,17 @@ export function ThreeJSCanvas() {
         const trees = makeTreesMesh(world.tiles);
         scene.add(trees);
 
-        const bricks = makeBrickMesh(world.tiles);
-        scene.add(bricks);
+        const pyramids = makeBrickMesh(world.tiles);
+        scene.add(pyramids);
+
+        const ocean = makeWaterMesh(-hexagonWorldRadius*0.1);
+        scene.add(ocean);
+        const oceanFloor = makeOceanFloorMesh(-hexagonWorldRadius*0.5);
+        scene.add(oceanFloor);
 
         // ===== 🎥 CAMERA =====
         let canvas: HTMLCanvasElement = canvasRef.current!;
-        const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+        const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
         camera.position.set(0, 25, 25);
 
         // ===== 🕹️ CONTROLS =====
@@ -136,7 +142,7 @@ export function ThreeJSCanvas() {
             return needResize;
         };
 
-        const animate = () => {
+        const animate = (timestamp:number) => {
             requestId = requestAnimationFrame(animate);
 
             stats.update();
@@ -149,10 +155,12 @@ export function ThreeJSCanvas() {
 
             cameraControls.update();
 
+            ocean.material.uniforms.uTime.value = timestamp;
+
             renderer.render(scene, camera);
         };
 
-        animate();
+        animate(0);
 
         return (): void => {
             cancelAnimationFrame(requestId);
