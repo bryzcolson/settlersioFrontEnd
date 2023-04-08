@@ -19,6 +19,7 @@ import { makeBrickMesh } from '../three/ZigguratGeometry';
 
 export function ThreeJSCanvas() {
     const canvasRef = useRef(null);
+    let requestId:number;
 
     useEffect(() => {
         // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
@@ -111,7 +112,7 @@ export function ThreeJSCanvas() {
 
         // ===== 🎥 CAMERA =====
         let canvas: HTMLCanvasElement = canvasRef.current!;
-        const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+        const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
         camera.position.set(0, 25, 25);
 
         // ===== 🕹️ CONTROLS =====
@@ -141,8 +142,8 @@ export function ThreeJSCanvas() {
             return needResize;
         };
 
-        const animate = () => {
-            requestAnimationFrame(animate);
+        const animate = (timestamp:number) => {
+            requestId = requestAnimationFrame(animate);
 
             stats.update();
 
@@ -154,13 +155,15 @@ export function ThreeJSCanvas() {
 
             cameraControls.update();
 
+            ocean.material.uniforms.uTime.value = timestamp;
+
             renderer.render(scene, camera);
         };
 
-        animate();
+        animate(0);
 
         return (): void => {
-            document.body.removeChild(renderer.domElement);
+            cancelAnimationFrame(requestId);
         };
     }, []);
 
