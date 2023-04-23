@@ -51,7 +51,8 @@ export class Tile {
             return [181, 191 + Math.random() * 15, 190 + Math.random() * 15];
         }
         if (this.tileType === TileType.WHEAT) {
-            return [251, 221 + Math.random() * 15, 126 + Math.random() * 15];
+            return [203, 163 + Math.random() * 8, 91 + Math.random() * 8];
+            // return [251, 221 + Math.random() * 15, 126 + Math.random() * 15];
         }
         if (this.tileType === TileType.BRICK) {
             return [170 + Math.random()*15, 74 + Math.random()*3, 68 + Math.random()*3];
