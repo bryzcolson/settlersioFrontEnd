@@ -22,12 +22,21 @@ export class Tile {
 
     tileType: TileType;
 
+    shouldClampDistToCenterHexagon: boolean;
+
     constructor(x: number, y: number, innerRadius: number, outerRadius: number, tileType: TileType) {
         // Initialize variables
         this.innerHexagon = new Hexagon(x, y, innerRadius);
         this.outerHexagon = new Hexagon(x, y, outerRadius);
         this.tileType = tileType;
         this.noiseMap = NoiseFactory.noiseFromTileType(this.tileType, this.innerHexagon);
+
+        // Tall peak in the middle looks good for the mountains but not others.
+        if (tileType === TileType.STONE) {
+            this.shouldClampDistToCenterHexagon = false;
+        } else {
+            this.shouldClampDistToCenterHexagon = true;
+        }
     }
 
     /**
@@ -40,7 +49,14 @@ export class Tile {
     }
 
     getHeight(position: THREE.Vector2): number {
-        return this.noiseMap.getPerlin(position.x, position.y);
+        if (this.shouldClampDistToCenterHexagon) {
+            const distanceScaling = this.innerHexagon.clampedDistanceToHexagon(position.x, position.y) /
+                this.innerHexagon.radius;
+            return distanceScaling * this.noiseMap.getPerlin(position.x, position.y);
+        }
+        const distanceScaling = this.innerHexagon.distanceToHexagon(position.x, position.y) / this.innerHexagon.radius;
+        return distanceScaling * this.noiseMap.getPerlin(position.x, position.y);
+    
     }
 
     getColor(): number[] {
