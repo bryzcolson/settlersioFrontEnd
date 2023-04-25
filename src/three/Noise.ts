@@ -110,8 +110,7 @@ export class Noise {
         const ix1 = this.lerp(n0, n1, xT);
 
         return (
-            (2 * (this.lerp(ix0, ix1, yT) + 2) * this.hexagon.distanceToHexagon(x, y) * this.scaleFactor) /
-            this.hexagon.radius
+            2 * (this.lerp(ix0, ix1, yT) + 2) * this.scaleFactor
         );
     }
     //--------------------------
