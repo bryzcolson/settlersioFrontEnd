@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
 import { Tile, TileType } from './Tile';
+import { colorGeometry } from './ThreeUtils';
 
 
 /**
@@ -80,7 +81,6 @@ function addWindmill(tile:Tile, windmillGeoms: THREE.BufferGeometry[],
     const sailDepth = turbineDepth * 0.15;
 
     // Compute where the windmill goes in the tile
-    const windmillLocalRotationVertical = 0; // shhhhh we don't need to worry about this variable
     const windmillXRelativeToTileCenter = -1*r*bottomSideWithWheat*0.7;
     const windmillZRelativeToTileCenter = -r*0.3;
     const turbineZRelativeToTileCenter = windmillZRelativeToTileCenter - windmillRadius;
@@ -90,14 +90,12 @@ function addWindmill(tile:Tile, windmillGeoms: THREE.BufferGeometry[],
     //
     const windmillBaseGeom = new THREE.CylinderGeometry(upperWindmillRadius, 
         windmillRadius, windmillHeight, 6, 1, false);
-    windmillBaseGeom.rotateY(windmillLocalRotationVertical);
     windmillBaseGeom.translate(windmillXRelativeToTileCenter, windmillHeight/2, windmillZRelativeToTileCenter);
     windmillBaseGeom.rotateY(windmillRotationAroundCenterOfTile);
     windmillBaseGeom.translate(centerX, 0, centerY);
 
     const windmillTopCylinderGeom = new THREE.CylinderGeometry(windmillTopRadius, 
         windmillTopRadius, windmillTopCylinderHeight, 6, 1, false);
-    windmillTopCylinderGeom.rotateY(windmillLocalRotationVertical);
     windmillTopCylinderGeom.translate(windmillXRelativeToTileCenter, windmillHeight+windmillTopCylinderHeight/2,
         windmillZRelativeToTileCenter);
     windmillTopCylinderGeom.rotateY(windmillRotationAroundCenterOfTile);
@@ -105,7 +103,6 @@ function addWindmill(tile:Tile, windmillGeoms: THREE.BufferGeometry[],
 
     const windmillTopConeGeom = new THREE.CylinderGeometry(0, 
         windmillTopRadius, windmillTopConeHeight, 6, 1, false);
-    windmillTopConeGeom.rotateY(windmillLocalRotationVertical);
     windmillTopConeGeom.translate(windmillXRelativeToTileCenter, 
         windmillHeight + windmillTopCylinderHeight + windmillTopConeHeight/2, windmillZRelativeToTileCenter);
     windmillTopConeGeom.rotateY(windmillRotationAroundCenterOfTile);
@@ -153,53 +150,13 @@ function addWindmill(tile:Tile, windmillGeoms: THREE.BufferGeometry[],
     //
 
     // Windmill structure
-    // rgb(99, 92, 71)
-    const positionAttributeTrunk = windmillBaseGeom.getAttribute('position');
-    const colorArrayTrunk = [];
-    for (let i = 0; i < positionAttributeTrunk.count; i++) {
-        colorArrayTrunk.push(198);
-        colorArrayTrunk.push(184);
-        colorArrayTrunk.push(142);
-    }
-    windmillBaseGeom.setAttribute('color', new THREE.BufferAttribute(new Uint8Array(colorArrayTrunk), 3, true));
-
-    // rgb(54, 57, 61)
-    const positionAttributeTop = windmillTopCylinderGeom.getAttribute('position');
-    const colorArrayTop = [];
-    for (let i = 0; i < positionAttributeTop.count; i++) {
-        colorArrayTop.push(54);
-        colorArrayTop.push(57);
-        colorArrayTop.push(61);
-    }
-    windmillTopCylinderGeom.setAttribute('color', new THREE.BufferAttribute(new Uint8Array(colorArrayTop), 3, true));
-    const positionAttributeTopCone = windmillTopConeGeom.getAttribute('position');
-    const colorArrayTopCone = [];
-    for (let i = 0; i < positionAttributeTopCone.count; i++) {
-        colorArrayTopCone.push(54);
-        colorArrayTopCone.push(57);
-        colorArrayTopCone.push(61);
-    }
-    windmillTopConeGeom.setAttribute('color', new THREE.BufferAttribute(new Uint8Array(colorArrayTopCone), 3, true));
+    colorGeometry(windmillBaseGeom, new THREE.Color(198, 184, 143));
+    colorGeometry(windmillTopCylinderGeom, new THREE.Color(54, 57, 61));
+    colorGeometry(windmillTopConeGeom, new THREE.Color(54, 57, 61));
 
     // Turbines and sails
-    // rgb(146, 97, 42)
-    const positionAttributeTurbine = turbine.getAttribute('position');
-    const colorArrayTurbine = [];
-    for (let i = 0; i < positionAttributeTurbine.count; i++) {
-        colorArrayTurbine.push(146);
-        colorArrayTurbine.push(97);
-        colorArrayTurbine.push(42);
-    }
-    turbine.setAttribute('color', new THREE.BufferAttribute(new Uint8Array(colorArrayTurbine), 3, true));
-
-    const positionAttributeSails = sails.getAttribute('position');
-    const colorArraySails = [];
-    for (let i = 0; i < positionAttributeSails.count; i++) {
-        colorArraySails.push(255);
-        colorArraySails.push(255);
-        colorArraySails.push(255);
-    }
-    sails.setAttribute('color', new THREE.BufferAttribute(new Uint8Array(colorArraySails), 3, true));
+    colorGeometry(turbine, new THREE.Color(146, 97, 42));
+    colorGeometry(sails, new THREE.Color(255, 255, 255));
 
     //
     // Append the geometries to the lists
