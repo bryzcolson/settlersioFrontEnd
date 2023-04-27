@@ -16,6 +16,8 @@ import { makeTreesMesh } from '../three/TreeGeometry';
 import { World } from '../three/World';
 import { makeOceanFloorMesh, makeWaterMesh } from '../three/Ocean';
 import { makeBrickMesh } from '../three/ZigguratGeometry';
+import { WheatField } from '../three/Wheat';
+
 
 export function ThreeJSCanvas() {
     const canvasRef = useRef(null);
@@ -110,6 +112,8 @@ export function ThreeJSCanvas() {
         const oceanFloor = makeOceanFloorMesh(-hexagonWorldRadius*0.5);
         scene.add(oceanFloor);
 
+        const wheatField = new WheatField(world.tiles, scene);
+
         // ===== 🎥 CAMERA =====
         let canvas: HTMLCanvasElement = canvasRef.current!;
         const camera = new PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
@@ -130,6 +134,7 @@ export function ThreeJSCanvas() {
         new Clock();
         const stats = Stats();
         document.body.appendChild(stats.dom);
+        let lastFrame = 0;
 
         const resizeRendererToDisplaySize = (webGLRenderer: WebGLRenderer) => {
             canvas = canvasRef.current!;
@@ -144,6 +149,8 @@ export function ThreeJSCanvas() {
 
         const animate = (timestamp:number) => {
             requestId = requestAnimationFrame(animate);
+            const deltaTime = timestamp - lastFrame;
+            lastFrame = timestamp;
 
             stats.update();
 
@@ -156,6 +163,7 @@ export function ThreeJSCanvas() {
             cameraControls.update();
 
             ocean.material.uniforms.uTime.value = timestamp;
+            wheatField.update(deltaTime);
 
             renderer.render(scene, camera);
         };

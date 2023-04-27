@@ -18,7 +18,7 @@ export class NoiseFactory {
             noise = new Noise(10, x, y, hexagon.radius * 2, hexagon, 0.1);
             return noise;
         case TileType.WHEAT:
-            noise = new Noise(10, x, y, hexagon.radius * 2, hexagon, 0.1);
+            noise = new Noise(10, x, y, hexagon.radius * 2, hexagon, 0);
             return noise;
         default:
             noise = new Noise(1, x, y, hexagon.radius * 2, hexagon, 0);
