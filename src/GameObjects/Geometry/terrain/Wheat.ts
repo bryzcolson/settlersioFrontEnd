@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
-import { Tile, TileType } from './Tile';
-import { colorGeometry } from './ThreeUtils';
+import { Tile, TileType } from '../../../utility/Tile';
+import { colorGeometry } from '../../../utility/ThreeUtils';
+import { GameObject } from '../../GameObject';
 
 
 /**
@@ -182,14 +183,15 @@ function addWindmill(tile:Tile, windmillGeoms: THREE.BufferGeometry[],
 }
 
 
-class WheatField {
+class WheatField extends GameObject {
     wheatStalks: THREE.Mesh;
 
     windmillStructure: THREE.Mesh;
 
     windmillTurbines: THREE.Mesh[];
 
-    constructor(tiles:Tile[][], scene:THREE.Scene) {
+    constructor(tiles:Tile[][]) {
+        super();
         const wheatFieldGeometries: THREE.BufferGeometry[] = [];
         const windmillBaseGeometries: THREE.BufferGeometry[] = [];
         const turbines: THREE.Mesh[] = [];
@@ -220,10 +222,10 @@ class WheatField {
         this.wheatStalks = new THREE.Mesh(wheatGeom, wheatStalksMaterial);
         this.windmillStructure = new THREE.Mesh(windmillGeom, windMillBaseMaterial);
         this.windmillTurbines = turbines;
-        scene.add(this.wheatStalks);
-        scene.add(this.windmillStructure);
+        super.add(this.wheatStalks);
+        super.add(this.windmillStructure);
         for (let i = 0; i < turbines.length; i++) {
-            scene.add(turbines[i]);
+            super.add(turbines[i]);
         }
     }
 

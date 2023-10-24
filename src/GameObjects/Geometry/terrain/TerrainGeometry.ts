@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { Vector2, Vector3 } from 'three';
 import { addContinentalShelf } from './ContinentalShelf';
-import { Tile, TileType } from './Tile';
+import { Tile, TileType } from '../../../utility/Tile';
+import { GameObject } from '../../GameObject';
 
 /**
  * Adds a triangle's vertex positions and vertex colors to the given arrays
@@ -33,7 +34,7 @@ function addTriangle(triangle: THREE.Triangle, vertexArray: number[], colorArray
     colorArray.push(color[2]);
 }
 
-export class World {
+export class TerrainGeometry extends GameObject{
     hexagonVertexRadius: number; // How many side lengths from hexagon corner to center on the terrain.
 
     innerHexagonVertexRadius: number; // How many side lengths from inner hexagon corner to center.
@@ -52,7 +53,7 @@ export class World {
 
     halfPointLen: number; // Half of onePointLen
 
-    terrain: THREE.Mesh;
+    terrainMesh: THREE.Mesh;
 
     /**
      * Creates a terrain
@@ -72,6 +73,7 @@ export class World {
         innerHexagonVertexRadius: number,
         tileTypes: TileType[][]
     ) {
+        super();
         this.tileGridWidth = tileTypes.length;
         this.tileGridHeight = tileTypes[0].length;
         this.hexagonWorldRadius = hexagonWorldRadius;
@@ -84,7 +86,8 @@ export class World {
         this.onePointHeight = this.onePointLen * Math.sqrt(3) * 0.5;
 
         this.tiles = [];
-        this.terrain = this.makeTerrain(tileTypes);
+        this.terrainMesh = this.makeTerrain(tileTypes);
+        super.add(this.terrainMesh);
     }
 
     private makeTerrain(tileTypes: TileType[][]): THREE.Mesh {
@@ -231,9 +234,5 @@ export class World {
         }
         const x = leftMostXInRow + this.onePointLen * xc;
         return new THREE.Vector2(x, y);
-    }
-
-    getTerrain(): THREE.Mesh {
-        return this.terrain;
     }
 }

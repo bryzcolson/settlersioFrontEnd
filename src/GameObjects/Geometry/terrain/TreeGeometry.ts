@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
 import { BufferGeometry, Vector3 } from 'three';
-import { Tile, TileType } from './Tile';
-import { Hexagon } from './Hexagon';
+import { Tile, TileType } from '../../../utility/Tile';
+import { Hexagon } from '../../../utility/Hexagon';
+import { GameObject } from '../../GameObject';
 
 const TREE_RADIUS_HEXAGON_MULTIPLE = 0.1; // Tree radius multiple compared to hexagon radius
 const TREE_HEIGHT_HEXAGON_MULTIPLE = 0.2; // Tree height compared to hexagon radius
@@ -90,25 +91,27 @@ function addForest(tile:Tile, geometries:BufferGeometry[]) {
     
 }
 
-function makeTreesMesh(tiles:Tile[][]):THREE.Mesh {
-    const geometries: BufferGeometry[] = [];
-    for (let i = 0; i < tiles.length; i++) {
-        const col = tiles[i];
-        for (let j = 0; j < col.length; j++) {
-            if (col[j].tileType === TileType.WOOD) {
-                addForest(col[j], geometries);
+export class TreeGeometry extends GameObject {
+    treeMesh: THREE.Mesh;
+
+    constructor(tiles: Tile[][]) {
+        super();
+        const geometries: BufferGeometry[] = [];
+        for (let i = 0; i < tiles.length; i++) {
+            const col = tiles[i];
+            for (let j = 0; j < col.length; j++) {
+                if (col[j].tileType === TileType.WOOD) {
+                    addForest(col[j], geometries);
+                }
             }
         }
+
+        const geom = BufferGeometryUtils.mergeBufferGeometries(geometries);
+
+        const mat = new THREE.MeshStandardMaterial({
+            vertexColors: true
+        });
+        this.treeMesh = new THREE.Mesh(geom, mat);
+        super.add(this.treeMesh);
     }
-
-
-    const geom = BufferGeometryUtils.mergeBufferGeometries(geometries);
-
-    const mat = new THREE.MeshStandardMaterial({
-        vertexColors: true
-    });
-
-    return new THREE.Mesh(geom, mat);
 }
-
-export {makeTreesMesh};
