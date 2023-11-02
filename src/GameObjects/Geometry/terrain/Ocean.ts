@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GameObject } from '../../GameObject';
 
 const OCEAN_WIDTH = 1000;
 const OCEAN_HEIGHT = OCEAN_WIDTH;
@@ -63,36 +64,48 @@ void main(){
 }
 `;
 
-function makeWaterMesh(y:number) {
-    // First, create the water plane geometry
-    const waterGeometry = new THREE.PlaneGeometry(OCEAN_WIDTH, OCEAN_WIDTH, 1, 1);
+export class OceanWater extends GameObject {
+    waterMesh: THREE.Mesh;
 
-    const texture = new THREE.TextureLoader().load( 'images/waterTexture.png' );
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
+    constructor(y: number) {
+        super();
+        // First, create the water plane geometry
+        const waterGeometry = new THREE.PlaneGeometry(OCEAN_WIDTH, OCEAN_WIDTH, 1, 1);
 
-    const uniforms = {
-        uTime: { value: 0.0 },
-        texture1: {value: texture},
-        uPlaneSize: {value: new THREE.Vector2(ANIMATION_SCALE, ANIMATION_SCALE)},
-    };
+        const texture = new THREE.TextureLoader().load( 'images/waterTexture.png' );
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
 
-    // Create custom shader material
-    const waterMaterial = new THREE.ShaderMaterial( {
-        uniforms,
-        vertexShader: vertShader,
-        fragmentShader: fragShader,
-        transparent:true,
-    } );
+        const uniforms = {
+            uTime: { value: 0.0 },
+            texture1: {value: texture},
+            uPlaneSize: {value: new THREE.Vector2(ANIMATION_SCALE, ANIMATION_SCALE)},
+        };
 
-    // Create the water mesh with the geometry and material
-    const waterMesh = new THREE.Mesh(waterGeometry, waterMaterial);
+        // Create custom shader material
+        const waterMaterial = new THREE.ShaderMaterial( {
+            uniforms,
+            vertexShader: vertShader,
+            fragmentShader: fragShader,
+            transparent:true,
+        } );
 
-    // Set the rotation of the water mesh to face up
-    waterMesh.rotation.x = -Math.PI / 2;
-    waterMesh.position.y = y;
+        // Create the water mesh with the geometry and material
+        const waterMesh = new THREE.Mesh(waterGeometry, waterMaterial);
 
-    return waterMesh;
+        // Set the rotation of the water mesh to face up
+        waterMesh.rotation.x = -Math.PI / 2;
+        waterMesh.position.y = y;
+
+        this.waterMesh = waterMesh;
+        super.add(waterMesh);
+    }
+
+    override update(deltaTime: number): void {
+        let shaderMaterial: THREE.ShaderMaterial = this.waterMesh.material as THREE.ShaderMaterial;
+        shaderMaterial.uniforms.uTime.value += deltaTime;
+    }
+
 }
 
 function makeOceanFloorMesh(y:number) {
@@ -109,4 +122,11 @@ function makeOceanFloorMesh(y:number) {
     return mesh;
 }
 
-export {makeWaterMesh, makeOceanFloorMesh};
+export class OceanFloor extends GameObject {
+    oceanMesh: THREE.Mesh;
+    constructor(y: number) {
+        super();
+        this.oceanMesh = makeOceanFloorMesh(y);
+        super.add(this.oceanMesh);
+    }
+}
