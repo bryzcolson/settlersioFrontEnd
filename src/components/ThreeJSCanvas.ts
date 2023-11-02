@@ -45,7 +45,6 @@ export function ThreeJSCanvas(initialGameState: GameState) {
 
         // Handle resizing the window
         if (resizeRendererToDisplaySize(renderer)) {
-            console.log("HELLOL");
             game.adjustCameraAspectRatio(canvas.clientWidth / canvas.clientHeight);
         }
 
@@ -53,7 +52,7 @@ export function ThreeJSCanvas(initialGameState: GameState) {
         game.update(deltaTime, timestamp);
 
         // Re render the scene
-        renderer.render(scene, game.camera);
+        renderer.render(scene, game.cameraControls.camera);
     };
 
     animate(0);

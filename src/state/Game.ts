@@ -17,7 +17,6 @@ import { HouseUI } from '../UI/HouseUI';
 
 export class Game {
     world: GameWorld;
-    camera: PerspectiveCamera;
     terrain: TerrainGeometry;
     lighting : Lighting;
     houseGeometry: HouseGeometry;
@@ -36,18 +35,14 @@ export class Game {
         initialGameState: GameState) {
         this.world = new GameWorld(scene);
 
-        this.camera = new PerspectiveCamera(50, initialCameraAspectRatio, 0.1, 1000);
-        this.camera.position.set(0, 25, 25);
-        scene.add(this.camera);
-
         const tileState = initialGameState.tileState
         const tileTypes = tileState.tileTypes;
         const hexagonWorldRadius = 3;
         this.terrain = new TerrainGeometry(hexagonWorldRadius, 6, 5, tileTypes);
         this.world.addGameObject(this.terrain);
 
-        this.cameraControls = new CameraController(this.camera, canvas, tileState.tileGridWidth,
-            tileState.tileGridHeight, hexagonWorldRadius, this.terrain);
+        this.cameraControls = new CameraController(canvas, tileState.tileGridWidth,
+            tileState.tileGridHeight, hexagonWorldRadius, this.terrain, initialCameraAspectRatio);
         this.world.addGameObject(this.cameraControls);
         
         this.trees = new TreeGeometry(this.terrain.tiles);
@@ -79,8 +74,8 @@ export class Game {
     }
 
     adjustCameraAspectRatio(aspectRatio: number) {
-        this.camera.aspect = aspectRatio;
-        this.camera.updateProjectionMatrix();
+        this.cameraControls.camera.aspect = aspectRatio;
+        this.cameraControls.camera.updateProjectionMatrix();
     }
 
 
@@ -105,7 +100,7 @@ export class Game {
         const mousePos = new THREE.Vector2(x,y);
 
         const raycaster = new THREE.Raycaster();
-        raycaster.setFromCamera(mousePos, this.camera);
+        raycaster.setFromCamera(mousePos, this.cameraControls.camera);
         return raycaster;
     }
 

@@ -1,15 +1,22 @@
-import { Camera } from 'three';
+import { Camera, PerspectiveCamera } from 'three';
 import { GameObject } from '../GameObject';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { TerrainGeometry } from '../Geometry/terrain/TerrainGeometry';
 export class CameraController extends GameObject {
+    camera: PerspectiveCamera;
     orbit: OrbitControls
 
-    constructor(camera: Camera, canvas: HTMLCanvasElement,
+    constructor(canvas: HTMLCanvasElement,
         tileGridWidth: number, tileGridHeight: number, hexagonWorldRadius: number,
-        terrain: TerrainGeometry) {
+        terrain: TerrainGeometry, initialCameraAspectRatio: number) {
         super();
-        this.orbit = new OrbitControls(camera, canvas);
+
+        this.camera = new PerspectiveCamera();
+        this.camera.aspect = initialCameraAspectRatio;
+        this.camera.position.set(0, 25, 25);
+        super.add(this.camera);
+
+        this.orbit = new OrbitControls(this.camera, canvas);
         const cameraTarget = terrain.terrainMesh.position.clone();
         // Temporary approximation for testing
         cameraTarget.x += tileGridWidth*hexagonWorldRadius*0.75;

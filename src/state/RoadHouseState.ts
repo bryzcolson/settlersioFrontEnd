@@ -499,17 +499,6 @@ export class RoadHouseState {
                 }
             }
         }
-
-        // Fill with houses for testing
-        /**for (let i = 0; i < this.width; i++) {
-            for (let j = 0; j < this.height; j++) {
-                for (let k = 0; k < this.depth; k++) {
-                    if (validHouseLocationDisconnected(i, j, k, tileTypes, this.stateArray)) {
-                        this.stateArray[i][j][k] = new PositionState('DEBUG_PLAYER', PositionStateType.TOWN);
-                    }
-                }
-            }
-        }*/
     }
 
     /**

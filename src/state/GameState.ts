@@ -1,5 +1,6 @@
 import { RoadHouseState } from './RoadHouseState';
 import { TileState } from './TileState';
+
 export class GameState {
     roadHouseState: RoadHouseState;
     tileState: TileState;
