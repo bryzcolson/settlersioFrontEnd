@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
 import { BufferGeometry, Vector3, Vector2 } from 'three';
-import { Tile, TileType } from './Tile';
-import { Hexagon } from './Hexagon';
+import { Tile, TileType } from '../../../utility/Tile';
+import { Hexagon } from '../../../utility/Hexagon';
+import { GameObject } from '../../GameObject';
 
 const ZIG_BLOCK_HEIGHT_PROP = 0.1; // Minimum width of top ziggurat block
 const SPACE_TOL_PROP = 0.01; // Minimum distance from ziggurat center to other object
@@ -111,21 +112,25 @@ function generateZiggurats(tile:Tile, geometries:BufferGeometry[]) {
     }
 }
 
-function makeBrickMesh(tiles:Tile[][]):THREE.Mesh {
-    const geometries: BufferGeometry[] = [];
-    for (let i = 0; i < tiles.length; i++) {
-        const col = tiles[i];
-        for (let j = 0; j < col.length; j++) {
-            if (col[j].tileType === TileType.BRICK) {
-                generateZiggurats(col[j], geometries);
+export class ZigguratGeometry extends GameObject{
+    pyramidMesh: THREE.Mesh;
+
+    constructor(tiles:Tile[][]) {
+        super();
+        const geometries: BufferGeometry[] = [];
+        for (let i = 0; i < tiles.length; i++) {
+            const col = tiles[i];
+            for (let j = 0; j < col.length; j++) {
+                if (col[j].tileType === TileType.BRICK) {
+                    generateZiggurats(col[j], geometries);
+                }
             }
         }
+        const geom = BufferGeometryUtils.mergeBufferGeometries(geometries);
+        const mat = new THREE.MeshStandardMaterial({
+            color: 0xffff55
+        });
+        this.pyramidMesh = new THREE.Mesh(geom, mat);
+        super.add(this.pyramidMesh);
     }
-    const geom = BufferGeometryUtils.mergeBufferGeometries(geometries);
-    const mat = new THREE.MeshStandardMaterial({
-        color: 0xffff55
-    });
-    return new THREE.Mesh(geom, mat);
 }
-
-export {makeBrickMesh};

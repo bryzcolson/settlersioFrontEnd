@@ -5,8 +5,11 @@
         "jest": true
     },
     "extends": [
-        "airbnb",
-        "prettier"
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "prettier/@typescript-eslint",
+        "plugin:prettier/recommended"
     ],
     "overrides": [
     ],
@@ -20,6 +23,7 @@
         "import-newlines"
     ],
     "rules": {
+        "lines-between-class-members": "off",
         "indent": [
             "error",
             4,
@@ -70,7 +74,8 @@
             {
                 "max-len": 120
             }
-        ]
+        ],
+        "prettier/prettier": "warn"
     },
     "settings": {
         "import/resolver": {
