@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
 import { Tile, TileType } from '../../../utility/Tile';
-import { colorGeometry } from '../../../utility/ThreeUtils';
+import { RGB255, colorGeometry } from '../../../utility/ThreeUtils';
 import { GameObject } from '../../GameObject';
 
 
@@ -151,13 +151,13 @@ function addWindmill(tile:Tile, windmillGeoms: THREE.BufferGeometry[],
     //
 
     // Windmill structure
-    colorGeometry(windmillBaseGeom, new THREE.Color(198, 184, 143));
-    colorGeometry(windmillTopCylinderGeom, new THREE.Color(54, 57, 61));
-    colorGeometry(windmillTopConeGeom, new THREE.Color(54, 57, 61));
+    colorGeometry(windmillBaseGeom, new RGB255(198, 184, 143));
+    colorGeometry(windmillTopCylinderGeom, new RGB255(54, 57, 61));
+    colorGeometry(windmillTopConeGeom, new RGB255(54, 57, 61));
 
     // Turbines and sails
-    colorGeometry(turbine, new THREE.Color(146, 97, 42));
-    colorGeometry(sails, new THREE.Color(255, 255, 255));
+    colorGeometry(turbine, new RGB255(146, 97, 42));
+    colorGeometry(sails, new RGB255(255, 255, 255));
 
     //
     // Append the geometries to the lists

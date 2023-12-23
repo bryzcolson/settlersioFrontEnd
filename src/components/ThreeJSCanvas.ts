@@ -4,10 +4,13 @@ import {
     WebGLRenderer,
 } from 'three';
 import { Game } from '../state/Game';
-import { GameState } from '../state/GameState';
+import { FullState } from '../state/FullState';
+import { AppSync } from './AWSAppSync';
+import { StateUpdateController } from '../state/StateUpdateController';
 
 
-export function ThreeJSCanvas(initialGameState: GameState) {
+export function ThreeJSCanvas(initialGameState: FullState, appSync: AppSync,
+     stateUpdateController: StateUpdateController) {
     const canvas:HTMLCanvasElement  = document.querySelector(`canvas#${"scene"}`)!
     let requestId:number;
 
@@ -17,15 +20,15 @@ export function ThreeJSCanvas(initialGameState: GameState) {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = PCFSoftShadowMap;
-    document.body.appendChild(renderer.domElement);
+    document.getElementById('game_box')!.appendChild(renderer.domElement);
     const scene = new Scene();
 
     // Handle resizing of the window
     const resizeRendererToDisplaySize = (webGLRenderer: WebGLRenderer) => {
-        const canvas = webGLRenderer.domElement
+        const rendererCanvas = webGLRenderer.domElement
         const width = canvas.clientWidth;
         const height = canvas.clientHeight;
-        const needResize = canvas.width !== width || canvas.height !== height;
+        const needResize = rendererCanvas.width !== width || rendererCanvas.height !== height;
         if (needResize) {
             webGLRenderer.setSize(width, height, false);
         }
@@ -34,7 +37,7 @@ export function ThreeJSCanvas(initialGameState: GameState) {
 
     // Create the actual game state
     const cameraAspectRatio = canvas.clientWidth / canvas.clientHeight;
-    const game = new Game(scene, cameraAspectRatio, canvas, initialGameState);
+    const game = new Game(scene, cameraAspectRatio, canvas, initialGameState, appSync, stateUpdateController);
 
     let lastFrameTime = 0;
     const animate = (timestamp:number) => {
@@ -43,10 +46,7 @@ export function ThreeJSCanvas(initialGameState: GameState) {
         const deltaTime = timestamp - lastFrameTime;
         lastFrameTime = timestamp;
 
-        // Handle resizing the window
-        if (resizeRendererToDisplaySize(renderer)) {
-            game.adjustCameraAspectRatio(canvas.clientWidth / canvas.clientHeight);
-        }
+        // TODO: Handle resizing the window - this somehow got broken in a previous commit
 
         // Update game state
         game.update(deltaTime, timestamp);

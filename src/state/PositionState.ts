@@ -10,11 +10,13 @@ export enum PositionStateType {
  */
 export class PositionState {
     player: String|null;
+    color: string;
     
     type: PositionStateType;
 
-    constructor(player:String, type: PositionStateType) {
+    constructor(player:String, type: PositionStateType, color: string) {
         this.player = player;
         this.type = type;
+        this.color = color;
     }
 }

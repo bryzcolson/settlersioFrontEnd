@@ -1,9 +1,6 @@
-import { ThreeJSCanvas } from "./components/ThreeJSCanvas";
-import { GameState } from "./state/GameState";
+import "./init";
+import { MenuManager } from "./components/MenuManager";
 
 onload = () => {
-    //TODO: Get state from server
-    const tempInitialState = new GameState();
-
-    ThreeJSCanvas(tempInitialState);
+    let menuManager = new MenuManager();
 }

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils';
-import { colorGeometry } from '../../../utility/ThreeUtils';
+import { colorGeometry, colorGeometryThree } from '../../../utility/ThreeUtils';
 import { RoadHouseState, getXZPosition } from '../../../state/RoadHouseState';
 import { PositionStateType } from '../../../state/PositionState';
 import { GameObject } from '../../GameObject';
@@ -8,7 +8,7 @@ import { GameObject } from '../../GameObject';
 /**
  * Returns a single town/house mesh at the x,z position scaled relative to hexagon radius r.
  */
-function createTownMesh(x: number, z:number, r: number) {
+function createTownMesh(x: number, z:number, r: number, color: string) {
     const scale = 0.8;
     const townWidth = r*0.2*scale;
     const townLength = r*0.3*scale;
@@ -34,11 +34,13 @@ function createTownMesh(x: number, z:number, r: number) {
 
     const finalGeom = BufferGeometryUtils.mergeBufferGeometries([townBase, prism]);
     finalGeom.translate(x, townBaseHeight*0.5, z);
-    colorGeometry(finalGeom, new THREE.Color(255, 50, 50));
+    console.log(color);
+    console.log(new THREE.Color(color));
+    colorGeometryThree(finalGeom, new THREE.Color(color));
     return new THREE.Mesh(finalGeom, new THREE.MeshStandardMaterial({vertexColors: true}));
 }
 
-function createRoadMesh(x:number, z:number, r:number, rotation: number) {
+function createRoadMesh(x:number, z:number, r:number, rotation: number, color:string) {
     const roadWidth = r*0.07;
     const roadLength = r*0.6;
     const roadHeight = r*0.07;
@@ -46,7 +48,7 @@ function createRoadMesh(x:number, z:number, r:number, rotation: number) {
     const road = new THREE.BoxGeometry(roadWidth, roadHeight, roadLength);
     road.rotateY(rotation);
     road.translate(x, roadHeight*0.5, z);
-    colorGeometry(road, new THREE.Color(255, 50, 50));
+    colorGeometryThree(road, new THREE.Color(color));
     return new THREE.Mesh(road, new THREE.MeshStandardMaterial({vertexColors: true}));
 
 }
@@ -81,9 +83,10 @@ export class HouseGeometry extends GameObject {
                 for (let k = 0; k < col2.length; k++) {
                     const position = getXZPosition(i, j, k, this.outerHexagonRadius);
                     const positionState = stateArray[i][j][k];
+                    const color = positionState.color;
 
                     if (positionState.type === PositionStateType.TOWN) {
-                        const mesh = createTownMesh(position.x, position.y, this.outerHexagonRadius);
+                        const mesh = createTownMesh(position.x, position.y, this.outerHexagonRadius, color);
                         this.houses.push(mesh);
                         super.add(mesh);
                     } else if (positionState.type === PositionStateType.ROAD) {
@@ -98,7 +101,7 @@ export class HouseGeometry extends GameObject {
                             rotation = -Math.PI / 6;
                         }
                         
-                        const mesh = createRoadMesh(position.x, position.y, this.outerHexagonRadius, rotation);
+                        const mesh = createRoadMesh(position.x, position.y, this.outerHexagonRadius, rotation, color);
                         this.houses.push(mesh);
                         super.add(mesh);
                     }

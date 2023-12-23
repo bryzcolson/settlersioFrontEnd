@@ -13,6 +13,18 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
 
 a {
   font-weight: 500;
@@ -23,13 +35,15 @@ a:hover {
   color: #535bf2;
 }
 
-body {
+html, body {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom:0px;
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-  height:100%;
+  padding:0;
+  height:100vh;
 }
 
 
@@ -45,7 +59,6 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -57,23 +70,15 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
 canvas {
+  position:absolute;
+  top:0px;
+  left:0px;
   height: 100%;
   width: 100%;
   outline: none;
+  padding:none;
+  margin:none;
 
   background: rgb(34, 193, 195);
   background: linear-gradient(
@@ -84,7 +89,17 @@ canvas {
     rgb(17, 19, 23)
   );
 }
-
+#game_box {
+  position:absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  height:100vh;
+  outline:none;
+  padding:0px;
+  margin: 0px;
+}
 
 #bottom-ui-box {
   position: fixed;
@@ -97,4 +112,36 @@ canvas {
   text-align: center;
   padding: 10px;
   font-size: 16px;
+}
+
+#loading_menu {
+  position: absolute;
+  margin: 0px;
+  padding: 0px;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  justify-content: center;
+  text-justify: center;
+}
+
+#loader_spinner {
+  width: 120px;
+  height: 120px;
+  margin: -76px 0 0 -76px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

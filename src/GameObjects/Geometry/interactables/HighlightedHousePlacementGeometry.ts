@@ -1,9 +1,11 @@
 import * as THREE from "three";
 import { TerrainGeometry } from "../terrain/TerrainGeometry";
 import { colorGeometry } from "../../../utility/ThreeUtils";
-import { PositionStateType } from "../../../state/PositionState";
+import { PositionState, PositionStateType } from "../../../state/PositionState";
 import { GameObject } from "../../GameObject";
 import { Game } from "../../../state/Game";
+import { RoadHouseStateUpdate } from "../../../state/RoadHouseStateUpdate";
+import { StateUpdate, StateUpdateType } from "../../../state/StateUpdate";
 
 /**
  * Cylindrical region that represents an area that it is possible to place a house/road

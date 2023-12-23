@@ -495,7 +495,7 @@ export class RoadHouseState {
             for (let j = 0; j < this.height; j++) {
                 this.stateArray[i][j] = [];
                 for (let k = 0; k < this.depth; k++) {
-                    this.stateArray[i][j][k] = new PositionState('empty_position', PositionStateType.EMPTY);
+                    this.stateArray[i][j][k] = new PositionState('empty_position', PositionStateType.EMPTY, "");
                 }
             }
         }
@@ -505,12 +505,12 @@ export class RoadHouseState {
      * inserts a house/road at the location given inside the state array. Does NOT place in the game world.
      * @param indexLocation the location to add the house
      */
-    putState(indexLocation: THREE.Vector3, placementGoal: PositionStateType) {
+    putState(indexLocation: THREE.Vector3, placementGoal: PositionStateType, playerName: string, playerColor: string) {
         this.stateArray[indexLocation.x][indexLocation.y][indexLocation.z] =
-            new PositionState('TODO PLAYER', placementGoal);
+            new PositionState(playerName, placementGoal, playerColor);
     }
 
-    getPossiblePlacementLocations(placementGoal: PositionStateType, detached: boolean) {
+    getPossiblePlacementLocations(placementGoal: PositionStateType, detached: boolean, player: string) {
         const possibleLocations = [];
         for (let i = 0 ; i < this.width; i++ ) {
             for (let j = 0; j < this.height; j++) {
@@ -523,7 +523,7 @@ export class RoadHouseState {
                             //TODO
                             break;
                         case PositionStateType.ROAD:
-                            if (validRoadLocation(i,j,k, this.tileTypes, this.stateArray, 'TODO PLAYER')) {
+                            if (validRoadLocation(i,j,k, this.tileTypes, this.stateArray, player)) {
                                 possibleLocations.push(new Vector3(i,j,k));
                             }
                             break;
@@ -531,7 +531,7 @@ export class RoadHouseState {
                             if (detached && validHouseLocationDisconnected(i,j,k, this.tileTypes, this.stateArray)) {
                                 possibleLocations.push(new Vector3(i,j,k));
                             }
-                            else if (validHouseLocationConnected(i,j,k, this.tileTypes, this.stateArray, 'TODO PLAYER')) {
+                            else if (validHouseLocationConnected(i,j,k, this.tileTypes, this.stateArray, player)) {
                                 possibleLocations.push(new Vector3(i,j,k));
                             }
                             break;

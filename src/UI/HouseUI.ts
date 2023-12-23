@@ -42,6 +42,6 @@ export class HouseUI {
         bottomBox.appendChild(placeHouseDetachedButton);
         bottomBox.appendChild(placeHouseButton);
         bottomBox.appendChild(placeRoadButton);
-        document.body.append(bottomBox);
+        document.getElementById('game_box')!.append(bottomBox);
     }
 }

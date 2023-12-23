@@ -5,10 +5,36 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <link rel="stylesheet" type="text/css" href="index.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>Hexplorers</title>
   </head>
   <body>
-    <canvas id="scene"></canvas>
+    <div id="loading_menu" style="display:none">
+      <div id="loader_spinner"></div>
+    </div>
+    <div id="main_menu">
+      <center>
+        <div><h1>MAIN MENU</h1></div>
+        <label for="main_menu_player_name_input">Player Name:</label>
+        <input type="text" id="main_menu_player_name_input"><br>
+        <label for="main_menu_player_color_input">Player Color:</label>
+        <input type="color" id="main_menu_player_color_input"><br>
+        <button id="create_room_input_button">Create Room</button>
+      </center>
+    </div>
+    <div id="lobby_menu" style="display:none">
+      <center>
+        <h1>LOBBY MENU</h1>
+        <h2 id="lobby_menu_id">LOBBY ID: </h2> <button id="lobby_menu_id_copy_button">COPY LINK</button>
+        <h2 id="lobby_menu_players_list_text">PLAYERS: </h2>
+        <h2>Settings1 Placeholder</h2>
+        <h2>Settings2 Placeholder</h2>
+        <button id="lobby_start_game_button">Start Game</button>
+      </center>
+    </div>
+    <div id="game_box" style="display:none">
+      <canvas id="scene"></canvas>
+    </div>
+  
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

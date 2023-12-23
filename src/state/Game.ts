@@ -11,9 +11,13 @@ import { ZigguratGeometry } from '../GameObjects/Geometry/terrain/ZigguratGeomet
 import { CameraController } from '../GameObjects/logic/CameraController';
 import { Lighting } from '../GameObjects/misc/Lighting';
 import { RoadHouseState, getXZPosition } from './RoadHouseState';
-import { GameState } from './GameState';
-import { PositionStateType } from './PositionState';
+import { FullState } from './FullState';
+import { PositionState, PositionStateType } from './PositionState';
 import { HouseUI } from '../UI/HouseUI';
+import { AppSync } from '../components/AWSAppSync';
+import { IRoadHouseStateUpdate, RoadHouseStateUpdate } from './RoadHouseStateUpdate';
+import { StateUpdate, StateUpdateType } from './StateUpdate';
+import { StateUpdateController } from './StateUpdateController';
 
 export class Game {
     world: GameWorld;
@@ -28,11 +32,16 @@ export class Game {
     roadHouseState: RoadHouseState;
     highlightedHousePlacementGeometry: HighlightedHousePlacementGeometry;
     cameraControls: CameraController;
+    stateUpdateController: StateUpdateController;
 
     houseUI: HouseUI;
+    appSync: AppSync;
 
     constructor(scene: Scene, initialCameraAspectRatio: number, canvas: HTMLCanvasElement,
-        initialGameState: GameState) {
+        initialGameState: FullState, appSync: AppSync, stateUpdateController: StateUpdateController) {
+        this.appSync = appSync;
+        this.stateUpdateController = stateUpdateController;
+        stateUpdateController.setGame(this);
         this.world = new GameWorld(scene);
 
         const tileState = initialGameState.tileState
@@ -84,7 +93,7 @@ export class Game {
     }
 
     addHighlightedAreas(placementGoal: PositionStateType, detached: boolean) {
-        const indexLocations = this.roadHouseState.getPossiblePlacementLocations(placementGoal, detached);
+        const indexLocations = this.roadHouseState.getPossiblePlacementLocations(placementGoal, detached, this.appSync.userID);
         const locations: [THREE.Vector3, THREE.Vector2][] = [];
         indexLocations.forEach((ijkVector: THREE.Vector3) => {
             const worldPositionVector = getXZPosition(ijkVector.x, ijkVector.y, ijkVector.z, 
@@ -104,9 +113,17 @@ export class Game {
         return raycaster;
     }
 
-    placeRoadOrSettlement(indexLocation: THREE.Vector3, placementGoal: PositionStateType) {
-        //TODO: Notify server -> server will notify client
-        this.roadHouseState.putState(indexLocation, placementGoal);
+    placeRoadOrSettlement(idx: THREE.Vector3, placementGoal: PositionStateType) {
+        const roadHouseStateUpdate = new RoadHouseStateUpdate(idx.x, idx.y, idx.z,
+            this.appSync.userID, placementGoal);
+        const update = new StateUpdate(roadHouseStateUpdate, StateUpdateType.ROAD_HOUSE_STATE, null);
+        this.appSync.publish(update);
+        this.stateUpdateController.updateLocalData(update);
+    }
+    serverRoadStateUpdate(update: IRoadHouseStateUpdate) {
+        const playerPlacing = this.appSync.menuManager.stateUpdateController.fullState.lobbyState.getPlayer(update.player);
+        const indexLocation = new THREE.Vector3(update.i, update.j, update.k);
+        this.roadHouseState.putState(indexLocation, update.placementGoal, playerPlacing!.playerID, playerPlacing!.playerColor);
         this.houseGeometry.updateMeshes();
         this.highlightedHousePlacementGeometry.empty();
     }
