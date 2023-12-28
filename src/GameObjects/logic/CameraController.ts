@@ -14,6 +14,7 @@ export class CameraController extends GameObject {
         this.camera = new PerspectiveCamera();
         this.camera.aspect = initialCameraAspectRatio;
         this.camera.position.set(0, 25, 25);
+        this.camera.updateProjectionMatrix();
         super.add(this.camera);
 
         this.orbit = new OrbitControls(this.camera, canvas);
