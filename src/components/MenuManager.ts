@@ -8,6 +8,7 @@ import { randomPlayerColor, randomPlayerName } from "../Utility/PlayerRandomizer
 import { ThreeJSCanvas } from "./ThreeJSCanvas";
 import { LoadingMenu } from "./LoadingMenu";
 import { StateUpdateController } from "../state/StateUpdateController";
+import { AWSWebSocketConnector } from "./AWSWebSocketConnector";
 
 export class MenuManager {
     mainMenu: MainMenu;
@@ -15,14 +16,17 @@ export class MenuManager {
     gameBox: GameBox;
     loadingMenu: LoadingMenu;
 
-    appSync: AppSync;
+    // appSync: AppSync;
 
     stateUpdateController: StateUpdateController;
+    websocketConnector: AWSWebSocketConnector;
 
 
     constructor() {
-        this.appSync = new AppSync(this);
-        this.stateUpdateController = new StateUpdateController(this, this.appSync);
+        // this.appSync = new AppSync(this);
+        this.websocketConnector = new AWSWebSocketConnector();
+        
+        this.stateUpdateController = new StateUpdateController(this);
 
         this.mainMenu = new MainMenu(this);
         this.lobbyMenu = new LobbyMenu(this);
@@ -56,7 +60,7 @@ export class MenuManager {
         const onConnectionSuccess = () => {
             const playerUpdate = new PlayerLobbyStateUpdate(
                 PlayerLobbyStateUpdateType.JOINING,
-                this.appSync.userID,
+                "", // this.appSync.userID,
                 playerName!, // Typescript checking not working here for some resaon?
                 playerColor!,
                 newLobby
@@ -67,20 +71,27 @@ export class MenuManager {
                 null
             );
             this.stateUpdateController.updateLocalData(stateUpdate);
-            this.appSync.publish(stateUpdate);
+            // this.appSync.publish(stateUpdate);
 
             this.lobbyMenu.setLobbyNameDisplay(lobbyName);
             this.hideAll();
             this.lobbyMenu.show();
         }
-        this.appSync.subscribe(lobbyName, onConnectionSuccess);
-        
+        // this.appSync.subscribe(lobbyName, onConnectionSuccess);
+        if (newLobby) {
+            console.log("NEW LOBBY TIME");
+            this.websocketConnector.createLobby(onConnectionSuccess);
+        }
+        else {
+            console.log("SECOND");
+            this.websocketConnector.joinLobby(lobbyName, onConnectionSuccess);
+        }
     }
 
     switchToGame() {
         this.hideAll();
         this.gameBox.show();
-        ThreeJSCanvas(this.stateUpdateController.fullState, this.appSync, this.stateUpdateController);
+        ThreeJSCanvas(this.stateUpdateController.fullState, this.stateUpdateController);
     }
 
     hideAll() {

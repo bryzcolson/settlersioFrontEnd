@@ -12,12 +12,12 @@ export class StateUpdateController {
 
     game: Game | undefined;
     fullState: FullState;
-    appSync: AppSync;
+    // appSync: AppSync;
     menuManager: MenuManager;
 
-    constructor(menuManager: MenuManager, appSync: AppSync) {
+    constructor(menuManager: MenuManager) {
         this.menuManager = menuManager;
-        this.appSync = appSync;
+        // this.appSync = appSync;
         this.fullState = new FullState();
     }
 
@@ -41,13 +41,13 @@ export class StateUpdateController {
                     this.menuManager.lobbyMenu.updateFromState();
                     // Send game state to player who just joined (if host)
                     const hostPlayer = this.fullState.lobbyState.getHost();
-                    if (hostPlayer != null && hostPlayer!.playerID == this.appSync.userID) {
+                    if (hostPlayer != null ) { //&& hostPlayer!.playerID == this.appSync.userID) {
                         const stateUpdate = new StateUpdate(
                             this.fullState.lobbyState,
                             StateUpdateType.FULL_LOBBY_STATE,
                             playerUpdate.playerID
                         );
-                        this.appSync.publish(stateUpdate);
+                        // this.appSync.publish(stateUpdate);
                     }
                     break;
                 case StateUpdateType.FULL_LOBBY_STATE:

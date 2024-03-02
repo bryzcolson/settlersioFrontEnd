@@ -9,8 +9,7 @@ import { AppSync } from './AWSAppSync';
 import { StateUpdateController } from '../state/StateUpdateController';
 
 
-export function ThreeJSCanvas(initialGameState: FullState, appSync: AppSync,
-     stateUpdateController: StateUpdateController) {
+export function ThreeJSCanvas(initialGameState: FullState, stateUpdateController: StateUpdateController) {
     const canvas:HTMLCanvasElement  = document.querySelector(`canvas#${"scene"}`)!
     let requestId:number;
 
@@ -37,7 +36,7 @@ export function ThreeJSCanvas(initialGameState: FullState, appSync: AppSync,
 
     // Create the actual game state
     const cameraAspectRatio = canvas.clientWidth / canvas.clientHeight;
-    const game = new Game(scene, cameraAspectRatio, canvas, initialGameState, appSync, stateUpdateController);
+    const game = new Game(scene, cameraAspectRatio, canvas, initialGameState, stateUpdateController);
 
     let lastFrameTime = 0;
     const animate = (timestamp:number) => {

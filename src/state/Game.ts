@@ -35,11 +35,9 @@ export class Game {
     stateUpdateController: StateUpdateController;
 
     houseUI: HouseUI;
-    appSync: AppSync;
 
     constructor(scene: Scene, initialCameraAspectRatio: number, canvas: HTMLCanvasElement,
-        initialGameState: FullState, appSync: AppSync, stateUpdateController: StateUpdateController) {
-        this.appSync = appSync;
+        initialGameState: FullState, stateUpdateController: StateUpdateController) {
         this.stateUpdateController = stateUpdateController;
         stateUpdateController.setGame(this);
         this.world = new GameWorld(scene);
@@ -115,13 +113,14 @@ export class Game {
 
     placeRoadOrSettlement(idx: THREE.Vector3, placementGoal: PositionStateType) {
         const roadHouseStateUpdate = new RoadHouseStateUpdate(idx.x, idx.y, idx.z,
-            this.appSync.userID, placementGoal);
+            "TODO_USERNAME_HERE",placementGoal);
         const update = new StateUpdate(roadHouseStateUpdate, StateUpdateType.ROAD_HOUSE_STATE, null);
-        this.appSync.publish(update);
+        // this.appSync.publish(update);
         this.stateUpdateController.updateLocalData(update);
     }
     serverRoadStateUpdate(update: IRoadHouseStateUpdate) {
-        const playerPlacing = this.appSync.menuManager.stateUpdateController.fullState.lobbyState.getPlayer(update.player);
+        // const playerPlacing = this.appSync.menuManager.stateUpdateController.fullState.lobbyState.getPlayer(update.player);
+        const playerPlacing = { playerID : "TODO"};
         const indexLocation = new THREE.Vector3(update.i, update.j, update.k);
         this.roadHouseState.putState(indexLocation, update.placementGoal, playerPlacing!.playerID, playerPlacing!.playerColor);
         this.houseGeometry.updateMeshes();
