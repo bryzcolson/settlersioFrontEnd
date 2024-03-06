@@ -15,14 +15,13 @@ export class MainMenu extends AbstractMenuContainer {
         playerColorInput.value = randomPlayerColor();
 
         createRoomInputButton.onclick = () => {
-            const lobbyName = Math.floor(Math.random()* 10000).toString();
             let playerName: string | null = playerNameInput.value;
             const playerColor = playerColorInput.value;
 
             if (playerName == "") {
                 playerName = null;
             }
-            menuManager.switchToLobbyMenu(lobbyName, true, playerName, playerColor);
+            menuManager.switchToLobbyMenu(true, playerName, playerColor);
         }
     }
 

@@ -25,6 +25,10 @@ export class LobbyMenu extends AbstractMenuContainer {
             navigator.clipboard.writeText(origin + "?lobbyName=" + this.lobbyName);
         }
 
+        document.getElementById("TEMP_BUTTON")!.onclick = () => {
+            menuManager.websocketConnector.sendMessage("HELLO WORLD");
+        }
+
         document.getElementById("lobby_start_game_button")!.onclick = () => {
             menuManager.switchToGame();
 

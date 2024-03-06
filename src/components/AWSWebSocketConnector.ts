@@ -22,12 +22,14 @@ export class AWSWebSocketConnector {
         this.websocket = new WebSocket(awsUrl);
         this.websocket.onmessage = (message) => {
             console.log("MESSAGE RECEIVEDD : ", message);
-            const data = JSON.parse(message.data);
+            const data = JSON.parse(message.data); // The entire json sent back from server
+            const payload = data.payload; // The objects sent back with data we care about for the game
+            const msgId = data.msgId; // Websocket message id to match request/response
             console.log(data);
-            if (!data.msgId) {
+            if (!data || !msgId || !payload) {
                 // Bad message - log it
                 console.warn("BAD WEBSOCKET RESPONSE: ", data);
-            } else if (data.msgId == -1) {
+            } else if (msgId == -1) {
                 // Message isn't responding to one of our requests. New data!
                 console.log(data); // TODO: use the data
             } else {
@@ -35,7 +37,7 @@ export class AWSWebSocketConnector {
                     const request = this.requestsWaiting[i];
                     if (request.msgId == data.msgId) {
                         // It is this response. Remove from our waiting responses and call the callback
-                        request.callback(data);
+                        request.callback(data.payload);
                         this.requestsWaiting.splice(i,1);
                         break;
                     } 
@@ -53,7 +55,7 @@ export class AWSWebSocketConnector {
         }
     }
 
-    private sendRequest(action: string, data: any, callback?: Function) {
+    private sendRequest(action: string, payload: any, callback?: Function) {
         const msgId = this.requestsCounter;
         if (callback) {
             this.requestsWaiting.push({
@@ -66,7 +68,7 @@ export class AWSWebSocketConnector {
         const fullMsg = {
            msgId: msgId,
            action: action,
-           data: data 
+           payload: payload 
         };
 
         const json = JSON.stringify(fullMsg);
@@ -91,5 +93,10 @@ export class AWSWebSocketConnector {
             gameId: gameId
         }
         this.sendRequest("joinLobby", msg, callback);
+    }
+
+    sendMessage(payload: Object, targetPlayer?: string, callback?: Function) {
+        const msg = payload;
+        this.sendRequest("messageLobby", msg, callback);
     }
 }

@@ -37,7 +37,7 @@ export class MenuManager {
         let params = new URLSearchParams(document.location.search);
         let lobbyName = params.get("lobbyName");
         if (lobbyName != null) {
-            this.switchToLobbyMenu(lobbyName, false, null, null);  
+            this.switchToLobbyMenu(false, null, null, lobbyName);  
         }
     }
 
@@ -46,7 +46,7 @@ export class MenuManager {
         this.mainMenu.show();
     }
 
-    switchToLobbyMenu(lobbyName: string, newLobby: boolean, playerName: string | null, playerColor: string | null) {
+    switchToLobbyMenu( newLobby: boolean, playerName: string | null, playerColor: string | null, gameId?: string,) {
         this.hideAll();
         this.loadingMenu.show();
 
@@ -57,7 +57,12 @@ export class MenuManager {
             playerColor = randomPlayerColor();
         }
 
-        const onConnectionSuccess = () => {
+        const onConnectionSuccess = (payload: any) => { // I'm lazy get over it
+            if (payload.gameId) {
+                // The payload should be the game id if we created a lobby
+                gameId = payload.gameId;
+            }
+
             const playerUpdate = new PlayerLobbyStateUpdate(
                 PlayerLobbyStateUpdateType.JOINING,
                 "", // this.appSync.userID,
@@ -73,18 +78,18 @@ export class MenuManager {
             this.stateUpdateController.updateLocalData(stateUpdate);
             // this.appSync.publish(stateUpdate);
 
-            this.lobbyMenu.setLobbyNameDisplay(lobbyName);
+            this.lobbyMenu.setLobbyNameDisplay(gameId!);
             this.hideAll();
             this.lobbyMenu.show();
         }
         // this.appSync.subscribe(lobbyName, onConnectionSuccess);
-        if (newLobby) {
+        if (!gameId) {
             console.log("NEW LOBBY TIME");
             this.websocketConnector.createLobby(onConnectionSuccess);
         }
         else {
             console.log("SECOND");
-            this.websocketConnector.joinLobby(lobbyName, onConnectionSuccess);
+            this.websocketConnector.joinLobby(gameId, onConnectionSuccess);
         }
     }
 
