@@ -18,7 +18,7 @@ export class AWSWebSocketConnector {
         this.isOpen = false;
         this.requestsWaitingToSendBeforeWebsocketIsOpen = [];
         this.requestsWaiting = [];
-        const awsUrl = "wss://ok389ph2o9.execute-api.us-east-1.amazonaws.com/dev/";
+        const awsUrl = "ws:localhost:8080";
         this.websocket = new WebSocket(awsUrl);
         this.websocket.onmessage = (message) => {
             console.log("MESSAGE RECEIVEDD : ", message);
@@ -47,6 +47,7 @@ export class AWSWebSocketConnector {
         }
         this.websocket.onopen = () => {
             console.log("WEBSOCKET HAS OPENED");
+            this.websocket.send("HELLO THERE");
             this.isOpen = true;
             for (let i = 0; i < this.requestsWaitingToSendBeforeWebsocketIsOpen.length; i++) {
                 const jsonToSend = this.requestsWaitingToSendBeforeWebsocketIsOpen[i];
